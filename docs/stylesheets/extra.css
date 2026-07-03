@@ -19,3 +19,32 @@
 .md-typeset details {
   font-size: 0.72rem;
 }
+
+/* Co-branding logo strip (C-DAC / NSM) */
+.cobrand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  margin: 1.4rem 0 0.4rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.cobrand img {
+  height: 56px;
+  width: auto;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.cobrand a:hover img {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+}
+.cobrand-caption {
+  width: 100%;
+  text-align: center;
+  font-size: 0.66rem;
+  color: var(--md-default-fg-color--light);
+  margin-top: 0.3rem;
+}
