@@ -11,11 +11,8 @@ system.
 [:material-file-pdf-box: Download the full manual (PDF)](assets/PARAM-Rudra-20PF-User-Manual.pdf){ .md-button .md-button--primary }
 [:material-server-network: System architecture](configuration.md#architecture-diagram){ .md-button }
 
-<div class="cobrand" markdown>
-[![Centre for Development of Advanced Computing (C-DAC)](assets/logo-cdac.png)](https://www.cdac.in)
-[![National Supercomputing Mission (NSM)](assets/logo-nsm.png)](https://nsmindia.in)
-<span class="cobrand-caption">PARAM Rudra is implemented by C-DAC under the National Supercomputing Mission, supported by MeitY and DST, Government of India.</span>
-</div>
+*PARAM Rudra is implemented by C-DAC under the National Supercomputing Mission,
+supported by MeitY and DST, Government of India.*{ .cobrand-caption }
 
 !!! tip "New here? Start with these three pages"
     1. [Getting Access](access.md) — connect over SSH (port **4422**).

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+<!--
+  Co-branding banner injected at the top of every page's content area.
+  Larger on the home page (page.is_homepage), smaller on inner pages.
+  Hidden in the generated PDF via @media print (see stylesheets/extra.css).
+-->
+{% block content %}
+  <div class="rudra-cobrand{% if page and page.is_homepage %} rudra-cobrand--home{% endif %}">
+    <a href="https://www.cdac.in" title="Centre for Development of Advanced Computing (C-DAC)" target="_blank" rel="noopener">
+      <img src="{{ base_url }}/assets/logo-cdac.png" alt="C-DAC">
+    </a>
+    <a href="https://nsmindia.in" title="National Supercomputing Mission (NSM)" target="_blank" rel="noopener">
+      <img src="{{ base_url }}/assets/logo-nsm.png" alt="National Supercomputing Mission">
+    </a>
+  </div>
+  {{ super() }}
+{% endblock %}
