@@ -20,39 +20,37 @@
   font-size: 0.72rem;
 }
 
-/* Co-branding logo banner (C-DAC / NSM) — injected on every page via overrides/main.html */
+/* Co-branding logos (C-DAC / NSM) — injected on every page via overrides/main.html.
+   C-DAC pinned to the top-left corner, NSM to the top-right corner. */
 .rudra-cobrand {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 1.1rem;
-  margin: 0 0 1rem;
-  padding: 0.55rem 0 0.9rem;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 0 0.9rem;
+  padding: 0.2rem 0 0.7rem;
   border-bottom: 1px solid var(--md-default-fg-color--lightest);
 }
 .rudra-cobrand img {
   height: 34px;                 /* inner pages: smaller */
   width: auto;
-  background: #ffffff;
-  padding: 5px 10px;
-  border-radius: 7px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: block;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
 .rudra-cobrand a:hover img {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
 }
 /* Home page: larger logos */
-.rudra-cobrand--home {
-  gap: 1.8rem;
-  padding: 0.4rem 0 1.2rem;
-}
 .rudra-cobrand--home img {
-  height: 64px;
-  padding: 8px 16px;
-  border-radius: 9px;
+  height: 60px;
+}
+
+/* Dark mode: keep the navy C-DAC / dark artwork legible on a light chip */
+[data-md-color-scheme="slate"] .rudra-cobrand img {
+  background: #ffffff;
+  padding: 5px 9px;
+  border-radius: 6px;
 }
 
 /* Legacy in-content strip caption (still used on the home page) */
