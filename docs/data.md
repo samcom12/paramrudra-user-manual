@@ -5,10 +5,13 @@ the file systems, the `/scratch` purge policy, quotas, and efficient transfers.
 
 ## File systems
 
-| Path | Role | Backed up? | Purge | Best for |
-| --- | --- | --- | --- | --- |
-| `/home/$USER` | Home — code, scripts, configs | Per site policy (keep your own copies too) | No | Small, important, permanent files |
-| `/scratch/$USER` | High-performance working space | **No** | **Files not accessed in 3 months are deleted** | Active job I/O, large temporary data |
+Storage is a **Lustre** parallel filesystem (10 PiB primary + 10 PiB archival,
+~100 GB/s).
+
+| Path | Role | Soft quota | Backed up? | Purge | Best for |
+| --- | --- | --- | --- | --- | --- |
+| `/home/$USER` | Home — code, scripts, configs | **50 GB** | Per site policy (keep your own copies too) | No | Small, important, permanent files |
+| `/scratch/$USER` | High-performance working space | **200 GB** | **No** | **Files not accessed in 3 months are deleted** | Active job I/O, large temporary data |
 
 !!! danger "Two rules that will save you"
     1. **`/scratch` is not storage.** Files untouched for 3 months are
@@ -103,6 +106,34 @@ performance:
 - **Don't poll files in tight loops** from many processes.
 - **Keep job I/O in `/scratch`, not `/home`** — `/home` is for code, not
   high-throughput reads/writes.
+
+## Lustre striping (large files)
+
+`/scratch` is Lustre, which spreads (**stripes**) large files across multiple
+storage targets (OSTs) for parallel bandwidth. For **very large files** you can
+raise the stripe count so each chunk is roughly 200–300 GB:
+
+| File size | Recommended stripe count | Command (run in the target directory) |
+| --- | --- | --- |
+| 500 GB – 1 TB | 4 | `lfs setstripe -c 4 .` |
+| 1 TB – 2 TB | 8 | `lfs setstripe -c 8 .` |
+
+```bash
+lfs getstripe <dir>              # check current striping
+lfs setstripe -c 4 <dir>         # stripe new files over 4 OSTs
+lfs setstripe -c 4 -s 10m <dir>  # also set 1 MB->10 MB stripe size
+lfs quota -h -u $USER /scratch   # your Lustre quota/usage
+```
+
+- Striping is set **per directory** and applies to **newly created** files;
+  subdirectories inherit their parent's setting at creation time.
+- Once a file is created, its stripe count **cannot be changed**.
+- `-c 0` = system default (usually 1); `-c -1` = stripe over all OSTs.
+
+!!! note "Don't over-stripe small files"
+    Striping helps only genuinely large files. For the typical few-GB file the
+    default (single stripe) is best — over-striping many small files hurts
+    metadata performance for everyone.
 
 ## Housekeeping
 

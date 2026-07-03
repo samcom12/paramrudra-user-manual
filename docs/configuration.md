@@ -1,88 +1,115 @@
 # System Configuration
 
-PARAM Rudra is a ~20 PetaFlop heterogeneous cluster combining CPU-only,
-high-memory and GPU-accelerated nodes on a high-speed InfiniBand fabric.
+PARAM Rudra is the ~20 PetaFlop supercomputing facility at **C-DAC Bangalore**,
+designed and implemented by the HPC Technologies group of C-DAC under the
+National Supercomputing Mission (NSM). It is a heterogeneous, hybrid system based
+on **Intel Xeon (2nd Gen Cascade Lake) processors** and **NVIDIA A100 GPUs**.
 
-## Node inventory
+## Headline numbers
 
-| Node class | Count | Prefix | Partition | Typical use |
-| --- | --- | --- | --- | --- |
-| CPU-only | 2,266 | `cbcn####` | `cpu` | MPI/OpenMP simulation, throughput jobs |
-| GPU-accelerated | 320 | `cbgpu####` | `gpu` | CUDA, AI/ML training & inference, GPU-HPC |
-| High-memory | 320 | `cbhm####` | `hm` | Large-memory pre/post-processing, genomics, in-memory analytics |
-| **Total** | **2,906** | — | — | — |
+| Metric | Value |
+| --- | --- |
+| Peak performance | **~20 PFLOPS** (CPU + GPU + HM) |
+| Total nodes | 2,946 |
+| Compute nodes | **2,906** (2,266 CPU + 320 GPU + 320 high-memory) |
+| Login nodes | 14 |
+| Management nodes | 24 |
+| Visualization nodes | 2 |
+| Interconnect | InfiniBand **NDR** (primary) + 10 Gbps Ethernet (secondary) |
+| Parallel filesystem | **Lustre** — 10 PiB primary + 10 PiB archival, ~100 GB/s |
+| Operating system | Rocky Linux 9.6 |
+| Scheduler | SLURM 23.11.10 |
+
+## Node types and per-node hardware
+
+| Node class | Count | CPU | Cores/node | Memory/node | Local SSD | GPUs | Partition |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **CPU compute** | 2,266 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB DDR4-2933 | 800 GB | — | `cpu` |
+| **GPU compute** | 320 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB DDR4-2933 | 800 GB | **2× NVIDIA A100 (80 GB HBM2e)** | `gpu` |
+| **High-memory** | 320 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | **768 GB** | 800 GB | — | `hm` |
+| Login | 14 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB | — | — (interactive gateway) |
 
 !!! info "Node naming convention"
-    Node hostnames encode their class: `cb` (C-DAC Bengaluru) + class
-    (`cn` = compute node, `gpu` = GPU node, `hm` = high-memory) + a 4-digit
-    index, e.g. `cbcn0001`, `cbgpu0044`, `cbhm0193`.
+    Hostnames encode the class: `cb` (C-DAC Bengaluru) + class
+    (`cn` = compute, `gpu` = GPU, `hm` = high-memory) + a 4-digit index —
+    e.g. `cbcn0001`, `cbgpu0044`, `cbhm0193`. You will always land on a login
+    node such as `login03`.
+
+Each **A100** provides 80 GB HBM2e and 6,912 CUDA cores; with 2 per GPU node that
+is 13,824 CUDA cores and 160 GB of GPU memory per node.
+
+!!! tip "Confirm live specs on an allocated node"
+    Specs above are from the official system documentation. To verify what a
+    given job actually sees, run these **on a compute node** (inside a job), not
+    on the login node:
+    ```bash
+    lscpu                 # sockets, cores, model name
+    free -h               # memory
+    numactl --hardware    # NUMA layout
+    nvidia-smi            # GPUs (on a gpu node)
+    ```
 
 ## Interconnect
 
-All nodes are connected over a **high-speed InfiniBand (IB)** network providing
-low-latency, high-bandwidth communication for MPI and for parallel storage
-access. This is what allows tightly-coupled jobs to scale across many nodes.
+- **Primary (message-passing) fabric:** InfiniBand **NDR** — high-bandwidth,
+  low-latency; carries MPI traffic and Lustre I/O. This is what lets
+  tightly-coupled jobs scale across many nodes.
+- **Secondary fabric:** 10 Gbps Gigabit Ethernet — management and general I/O.
+  Open MPI and MPICH both work over Ethernet with no extra configuration.
 
-## Storage layout
+## Storage
 
-| Path | Purpose | Persistence | Notes |
-| --- | --- | --- | --- |
-| `/home/<user>` | Source code, scripts, small inputs, configs | Long-lived, **quota-limited** | Backed up per site policy — still keep your own copies. |
-| `/scratch/<user>` | High-performance working space for running jobs | **Purged**: files not accessed in 3 months are deleted | Not backed up. Stage data here, run, then move results off. |
+Storage is a **Lustre** parallel filesystem:
 
-See [Data Management](data.md) for quotas, the purge policy and good practice.
+| Path | Purpose | Quota (soft) | Backed up? | Purge |
+| --- | --- | --- | --- | --- |
+| `/home/<user>` | Code, scripts, small inputs, results to keep | **50 GB** | Per site policy | No |
+| `/scratch/<user>` | High-performance working space for jobs | **200 GB** | **No** | Files not accessed in **3 months** are deleted |
 
-## Per-node hardware
+Total usable capacity is 10 PiB (primary) + 10 PiB (archival), with ~100 GB/s
+throughput. See [Data Management](data.md) for quotas, Lustre striping and the
+purge policy.
 
-!!! note "Confirm exact specs on the node"
-    Exact CPU model, core count, memory and GPU model are site-specific and may
-    differ per hardware batch. Always confirm on an **allocated compute node**
-    (not the login node) with the commands below rather than assuming.
+## Software stack
 
-Check CPU layout:
+| Functional area | Component(s) |
+| --- | --- |
+| Operating system | Rocky Linux 9.6 (x86_64) |
+| Provisioning / cluster manager | xCAT |
+| Monitoring | **C-CHAKSHU**, Nagios, Ganglia |
+| Resource manager | SLURM 23.11.10 |
+| I/O | Lustre client |
+| Interconnect stack | Mellanox InfiniBand (MLNX_OFED) |
+| Compilers | GNU (gcc/g++/gfortran), Intel oneAPI (icx/icpx/ifx) |
+| MPI | MVAPICH, Open MPI, MPICH, Intel MPI |
+| Package manager | **Spack** (primary), Environment Modules, Miniconda |
 
-```bash
-lscpu                 # sockets, cores per socket, threads, model name
-nproc                 # logical CPUs visible to this job
-free -h               # total / available memory
-numactl --hardware    # NUMA nodes and memory per NUMA domain
-```
-
-Check GPU layout (on a `gpu` node inside a job):
-
-```bash
-nvidia-smi                        # GPU model, count, memory, driver
-nvidia-smi topo -m                # GPU/NIC topology (NVLink, PCIe)
-nvidia-smi --query-gpu=name,memory.total --format=csv
-```
-
-A convenient one-liner to record a node's profile at the top of a job:
-
-```bash
-echo "Node: $(hostname)"; lscpu | grep -E 'Model name|^CPU\(s\)|Socket|NUMA node\(s\)'; free -h | head -2
-```
+**C-CHAKSHU** is C-DAC's multi-cluster management dashboard; users can monitor
+CPU, storage, interconnect, filesystem and application utilization from a single
+web dashboard.
 
 ## Partitions (queues)
 
-Six partitions are configured. The three primary user partitions and their hard
-limits (from the live SLURM configuration) are:
+Three user partitions map to the three compute node types. Limits below are from
+the **live SLURM configuration** on the login banner:
 
 | Partition | Max wall time | Max nodes / job | Target hardware |
 | --- | --- | --- | --- |
-| `cpu` *(default)* | `4-00:00:00` (4 days) | 1 | CPU-only `cbcn*` nodes |
-| `hm` | `4-00:00:00` (4 days) | 8 | High-memory `cbhm*` nodes |
-| `gpu` | `6-00:00:00` (6 days) | 128 | GPU `cbgpu*` nodes |
+| `cpu` *(default)* | `4-00:00:00` (4 days) | 1 | CPU-only `cbcn*` |
+| `hm` | `4-00:00:00` (4 days) | 8 | High-memory `cbhm*` (768 GB) |
+| `gpu` | `6-00:00:00` (6 days) | 128 | GPU `cbgpu*` (2× A100) |
 
 Additional partitions (e.g. benchmarking pools such as `hpl02`) may appear in
 `sinfo` and are generally reserved for system/administrative use.
 
-!!! tip "See the authoritative limits live"
-    Partition definitions can change. Query them directly:
+!!! note "Older docs mention a `standard` partition"
+    Some C-DAC sample scripts use `--partition=standard`. On this system the
+    actual partitions are **`cpu`, `hm`, `gpu`**. Use those. Always confirm live
+    limits with:
     ```bash
-    sinfo -s                                   # summary: partitions and node states
-    scontrol show partition cpu                # full limits for a partition
-    sinfo -o "%P %l %D %m %c"                   # partition, timelimit, nodes, mem, cores
+    sinfo -s
+    scontrol show partition cpu
     ```
 
-Continue to the [Environment](environment.md) page to set up your shell and
-modules, or jump to the [Batch System](batch.md) to start submitting jobs.
+Continue to [Environment](environment.md), or jump to the
+[Batch System](batch.md) to start submitting jobs.

@@ -1,178 +1,175 @@
 # Building Software
 
-This page covers compiling and installing your own code: compilers, MPI
-wrappers, CUDA, build systems, and interpreted languages.
+This page covers compiling your own code on PARAM Rudra: compilers, MPI, CUDA,
+MKL and OpenACC. Toolchains are provided through **[Spack](spack.md)**.
 
-!!! tip "Compile on a login node; run on compute nodes"
-    Compiling is allowed on login nodes. Long builds that pin CPUs for a long
-    time are better done in a short [interactive job](batch.md#interactive-jobs).
-    Never launch the resulting **compute** run on the login node.
+!!! tip "Compile on the login node; run on compute nodes"
+    *Compilation is done on the login node; execution happens on compute nodes
+    via SLURM.* Long or heavy builds are better done in a short
+    [interactive job](batch.md#interactive-jobs). Compile and run with the **same
+    compiler and library versions** to avoid surprises.
 
-## Compilers
+## Available compilers
 
-Load a compiler module first (versions from `module avail`):
+| Toolchain | Command(s) | Versions available |
+| --- | --- | --- |
+| GNU | `gcc` / `g++` / `gfortran` | 8.5.0, 9.5.0, 10.5.0, 11.5.0, 12.5.0, 13.4.0, 14.3.0, 15.2.0 |
+| Intel oneAPI | `icx` / `icpx` / `ifx` (classic: `icc`/`ifort`) | 2022.2.0, 2024.2.1 |
+| Intel MPI + GNU | `mpicc` / `mpicxx` / `mpif90` | 2021.18.0 |
+| Intel MPI + Intel | `mpiicx` / `mpiicpx` / `mpiifx` | 2021.18.0 |
+| CUDA | `nvcc` | 11.8.0, 12.2.2, 13.1.1 |
+| NVIDIA HPC SDK | `nvc` / `nvfortran` (OpenACC) | via `nvhpc` |
+
+Confirm exact builds/hashes with `spack find -l gcc`, `spack find -l intel-oneapi-compilers`, etc.
+
+!!! tip "Prefer Intel compilers on this hardware"
+    Intel compilers are generally **better optimized** for the Xeon Cascade Lake
+    CPUs. Recommended optimization flags:
+    **Intel:** `-O3 -xHost`  ·  **GNU:** `-O3`.
+
+## Set up Spack first
+
+```bash
+module load spack
+. /home/apps/spack/share/spack/setup-env.sh
+```
+
+## C / C++ / Fortran
+
+=== "Intel (recommended)"
+
+    ```bash
+    spack load gcc@13.4.0
+    spack load intel-oneapi-compilers /6asbh6t
+
+    icx  -O3 -xHost prog.c        -o app     # C
+    icpx -O3 -xHost prog.cpp      -o app     # C++
+    ifx  -O3 -xHost prog.f90      -o app     # Fortran
+    ./app
+    ```
 
 === "GNU"
 
     ```bash
-    module load gcc/12
-    gcc   -O3 -march=native -o app app.c
-    g++   -O3 -std=c++17    -o app app.cpp
-    gfortran -O3            -o app app.f90
+    spack load gcc@13.4.0
+    gcc      -O3 prog.c   -o app
+    g++      -O3 -std=c++17 prog.cpp -o app
+    gfortran -O3 prog.f90 -o app
     ```
 
-=== "Intel oneAPI"
+## OpenMP (shared memory)
 
-    ```bash
-    module load intel        # or intel-oneapi / intel/2024, per `module avail`
-    icx  -O3 -xHost -o app app.c        # classic: icc
-    ifx  -O3 -xHost -o app app.f90      # classic: ifort
-    # Intel MKL for BLAS/LAPACK/FFT:
-    icx -O3 app.c -qmkl -o app
-    ```
+```bash
+spack load gcc@13.4.0
+spack load intel-oneapi-compilers /6asbh6t
 
-=== "NVIDIA HPC SDK"
-
-    ```bash
-    module load nvhpc        # if available
-    nvc    -O3 -o app app.c
-    nvfortran -O3 -o app app.f90
-    nvc -acc -gpu=cc80 -o app app.c     # OpenACC offload example
-    ```
-
-Common optimisation flags: `-O3`, `-march=native`/`-xHost` (tune for the build
-node's CPU), `-fopenmp` (GNU) / `-qopenmp` (Intel) for OpenMP threading.
-
-!!! note "`-march=native` matches the build node"
-    If you build on a login node and run on a compute node with a *different*
-    CPU generation, `-march=native` may produce illegal instructions. When in
-    doubt, build inside an interactive job on the target partition, or target a
-    conservative common ISA.
+icx -O3 -xHost -qopenmp prog.c -o app_omp   # Intel: -qopenmp  (GNU: -fopenmp)
+export OMP_NUM_THREADS=48                    # up to 48 physical cores/node
+./app_omp
+```
 
 ## MPI
 
-Load an MPI module, then use its compiler wrappers (they add the right include
-and link flags automatically):
-
 ```bash
-module load gcc/12 openmpi/4.1.5     # or intel + intel-mpi
+spack load gcc@13.4.0
+spack load intel-oneapi-compilers@2024.2.1
+spack load intel-oneapi-mpi@2021.18.0
 
-mpicc   -O3 -o app_mpi app.c         # C
-mpicxx  -O3 -o app_mpi app.cpp       # C++
-mpif90  -O3 -o app_mpi app.f90       # Fortran
+mpiicx  -O3 -xHost prog.c   -o app_mpi       # Intel MPI + Intel compiler
+# or: mpicc -O3 prog.c -o app_mpi            # Intel MPI + GNU
 
-# Hybrid MPI + OpenMP
-mpicc -O3 -fopenmp -o app_hybrid app.c
+# Launch through SLURM (preferred), or Intel's launcher:
+srun --mpi=auto -n $SLURM_NTASKS ./app_mpi
+# mpirun -n <num_procs> ./app_mpi
 ```
 
-Run MPI programs **through SLURM** (`srun`), not with a bare `mpirun` on the
-login node — see [Batch System](batch.md) and [Examples](examples.md).
+Useful Intel MPI environment settings seen in production scripts:
 
 ```bash
-srun ./app_mpi        # inside an allocation, srun launches ranks across nodes
+export I_MPI_FALLBACK=disable
+export I_MPI_FABRICS=shm:ofa      # InfiniBand; (older: shm:dapl / shm:tmi)
+export I_MPI_DEBUG=5              # verbosity (raise for diagnostics)
 ```
 
-## CUDA / GPU builds
-
-On (or targeting) `gpu` nodes:
+## Intel MKL
 
 ```bash
-module load cuda            # e.g. cuda/12.x per `module avail`
-nvcc -O3 -arch=sm_80 -o app_gpu app.cu     # choose -arch for the actual GPU
+spack load gcc@13.4.0
+spack load intel-oneapi-compilers@2024.2.1
+spack load intel-oneapi-mkl@2026.0.0
 
-# MPI + CUDA
-module load gcc/12 openmpi cuda
-mpicxx -O3 app.cpp -lcudart -o app_mpi_gpu
+icx -O3 -xHost -mkl prog.c -o app_mkl        # link MKL BLAS/LAPACK/FFT
+./app_mkl
 ```
 
-Confirm the correct GPU architecture (`sm_XX`) for the installed GPUs:
+## CUDA (GPU) builds
+
+The A100 GPUs are **Ampere → `sm_80`**:
 
 ```bash
-# Inside a GPU job:
-nvidia-smi --query-gpu=name,compute_cap --format=csv
+spack load gcc@13.4.0
+spack load cuda@12.8.0                        # or 11.8.0 / 12.2.2 / 13.1.1
+
+nvcc -arch=sm_80 prog.cu -o app_gpu           # A100 = sm_80
+./app_gpu
 ```
 
-See [GPU Computing](gpu.md) for running, MPS, and multi-GPU jobs.
+CUDA + OpenMP, linking cuBLAS:
+
+```bash
+spack load gcc@13.4.0
+spack load cuda@12.2.2
+nvcc -arch=sm_80 -Xcompiler "-fopenmp" -lgomp mm_blas_omp.cu -lcublas -o app
+```
+
+!!! note "`-arch` must match the GPU and CUDA/GCC versions"
+    `sm_80` targets the A100 and is valid for CUDA 12+. Older CUDA releases only
+    work with older GCC — load a matching `gcc` module if you use an older CUDA.
+
+## OpenACC (NVIDIA HPC SDK)
+
+```bash
+spack load nvhpc@23.11
+spack load cuda@12.2.2
+
+# GPU offload (A100 = cc80):
+nvc -acc -fast -Minfo=all -gpu=cc80,managed prog.c -o app_acc
+# CPU multicore fallback:
+nvc -acc -fast -Minfo=all -mp=multicore prog.c -o app_cpu
+./app_acc
+```
+
+## Sample programs to start from
+
+C-DAC ships worked examples. Copy them and follow the compile/run notes in each
+file's header:
+
+```bash
+cp -r /home/apps/Docs/samples/ ~/
+```
+
+| File | Content |
+| --- | --- |
+| `mm.c` | Serial matrix–matrix multiply |
+| `mm_omp.c` | OpenMP version |
+| `mm_mpi.c` | MPI version |
+| `mm_acc.c` | OpenACC version |
+| `mm_blas.cu` | CUDA + cuBLAS |
+| `mm_mkl.c` | Intel MKL |
+| `laplace_acc.c` | OpenACC stencil |
 
 ## Build systems
 
-=== "Make"
-
-    ```bash
-    module load gcc/12
-    make -j $(nproc)          # parallel build using all cores on the node
-    ```
-
-=== "CMake"
-
-    ```bash
-    module load cmake gcc/12 openmpi
-    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=$HOME/opt/myapp
-    cmake --build build -j $(nproc)
-    cmake --install build
-    ```
-
-Install into `$HOME/opt/...` (or `/scratch` for large builds) and add the result
-to your `PATH`/`LD_LIBRARY_PATH`, or expose it via a
-[personal module](modules.md#building-your-own-module-advanced).
-
-## Python
-
-Two good options — Conda (default on the system) or `venv`:
-
-=== "Conda (recommended)"
-
-    ```bash
-    conda create -n proj python=3.11 numpy scipy mpi4py
-    conda activate proj
-    python -c "import numpy; print(numpy.__version__)"
-    ```
-
-=== "venv + pip"
-
-    ```bash
-    module load python 2>/dev/null || true   # or use the conda base python
-    python -m venv $HOME/venvs/proj
-    source $HOME/venvs/proj/bin/activate
-    pip install --upgrade pip
-    pip install numpy scipy pandas
-    ```
-
-For MPI-parallel Python, install `mpi4py` **against the cluster MPI**:
-
 ```bash
-module load gcc/12 openmpi
-pip install --no-binary=mpi4py mpi4py    # builds against the loaded MPI
+# Make
+spack load gcc@13.4.0
+make -j $(nproc)
+
+# CMake (load cmake via spack/module if needed)
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/opt/myapp
+cmake --build build -j $(nproc)
+cmake --install build
 ```
 
-!!! warning "Mind your `$HOME` quota"
-    Python environments can grow to many GB. Check `du -sh ~/.conda ~/venvs` and
-    place large environments under `/scratch` if needed (remember the purge
-    policy).
-
-## Julia and other languages
-
-```bash
-module avail 2>&1 | grep -i julia
-module load julia        # if provided
-julia -e 'using Pkg; Pkg.status()'
-```
-
-Set `JULIA_DEPOT_PATH` to a project location if you want packages outside
-`$HOME`.
-
-## Containers (if enabled)
-
-If a container runtime such as **Apptainer/Singularity** is provided:
-
-```bash
-module avail 2>&1 | grep -i -E 'apptainer|singularity'
-apptainer pull docker://ghcr.io/<org>/<image>:<tag>
-srun apptainer exec app.sif ./run.sh     # run inside a job
-```
-
-Containers are a clean way to ship reproducible software stacks; confirm
-availability and any registry/proxy requirements with [support](support.md).
-
-Next: submit your build to the [Batch System](batch.md).
+Next: submit your build to the [Batch System](batch.md), or see
+[Job Script Examples](examples.md).

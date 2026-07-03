@@ -1,8 +1,15 @@
 # GPU Computing
 
-PARAM Rudra has **320 GPU-accelerated nodes** (`cbgpu*`) in the `gpu` partition,
-which allows up to **128 nodes per job** and a **6-day** wall-time limit — ideal
-for large AI/ML training and GPU-accelerated HPC.
+PARAM Rudra has **320 GPU-accelerated nodes** (`cbgpu*`) in the `gpu` partition.
+Each node carries **2× NVIDIA A100 (80 GB HBM2e, Ampere, `sm_80`)** — 6,912 CUDA
+cores per GPU — on top of 2× Intel Xeon Gold 6240R (48 cores). The `gpu`
+partition allows up to **128 nodes per job** and a **6-day** wall-time limit —
+ideal for large AI/ML training and GPU-accelerated HPC.
+
+!!! info "A100 quick facts"
+    Compile CUDA for the A100 with `nvcc -arch=sm_80` (see
+    [Building CUDA](building.md#cuda-gpu-builds)). Request up to 2 GPUs per node
+    with `--gres=gpu:1` or `--gres=gpu:2`.
 
 ## Requesting GPUs
 
@@ -147,4 +154,6 @@ PY
     the GPU nodes (`nvidia-smi` shows the driver/CUDA version). Mismatches are
     the most common cause of `CUDA error: no kernel image is available`.
 
-See ready-to-run scripts on the [Job Script Examples](examples.md) page.
+For pre-built ML/DL Conda environments and launching a **Jupyter notebook** on a
+GPU node via SSH tunnel, see the [Machine Learning / DL](machine-learning.md)
+page. Ready-to-run scripts are on [Job Script Examples](examples.md).

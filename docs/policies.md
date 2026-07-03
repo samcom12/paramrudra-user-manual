@@ -71,17 +71,35 @@ scheduling and usage reporting.
   [parallel-filesystem best practices](data.md#parallel-filesystem-best-practices).
 - Release interactive allocations (`exit`) as soon as you are done.
 
-## 7. Security and account hygiene
+## 7. Storage quotas
 
-- Your account is **personal** — do not share credentials or let others use it.
-- Use SSH keys with passphrases; never store private keys, passwords or tokens
-  on the cluster or in a git repository.
-- Report suspected compromise or unusual activity to
-  [support](support.md) immediately.
+| Filesystem | Soft quota |
+| --- | --- |
+| `/home/$USER` | **50 GB** |
+| `/scratch/$USER` | **200 GB** |
+
+Stage inputs and run jobs in `/scratch`; copy results worth keeping back to
+`/home` (and off-cluster). Check usage with `lfs quota -h -u $USER /scratch`.
+See [Data Management](data.md).
+
+## 8. Security and account hygiene
+
+- Your account is **personal** — never share your password; you are responsible
+  for all actions from your account.
+- **2FA (Google Authenticator OTP) + CAPTCHA** is mandatory at every login; keep
+  your Authenticator device secure.
+- Do **not** grant other users permission to your home directory — it can expose
+  your files.
+- Never store passwords, SSH private keys or access tokens on the cluster or in a
+  git repository.
+- Only install software from **reliable, safe sources** (ransomware is a real
+  risk). Avoid spaces in file/directory names.
+- Report suspected compromise or anything strange (slowdowns, missing/corrupted
+  files) to [support](support.md) immediately.
 - Comply with your institution's and NSM's acceptable-use and data-handling
   rules (including for any sensitive/regulated data).
 
-## 8. Policy updates
+## 9. Policy updates
 
 !!! note "From the banner"
     *"Any updates regarding policy modifications will be posted here."*

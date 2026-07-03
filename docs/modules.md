@@ -1,107 +1,92 @@
-# Software Modules
+# Modules & Conda
 
-PARAM Rudra provides its software stack through **environment modules**. Modules
-let you load a precise combination of compiler, MPI and application versions on
-demand, and switch between them cleanly.
+PARAM Rudra exposes software through two complementary mechanisms:
 
-!!! quote "From the login banner"
-    *"We strongly recommend that users use the module file already available on
-    the cluster."*
+- **[Spack](spack.md)** — the *primary* package manager for compilers, MPI,
+  libraries and most applications (`spack load ...`).
+- **Environment Modules** (`module ...`) — used to enable Spack itself, the
+  **Miniconda** Python stack, and pre-built **ML/DL Conda environments**
+  (PyTorch, TensorFlow, …) and some applications.
 
-## Everyday commands
+This page covers `module` and Conda. For `spack`, see the
+[Spack Packages](spack.md) page.
+
+## Environment Modules
 
 | Command | What it does |
 | --- | --- |
 | `module avail` | List all available modules |
-| `module load <name>` | Load a module (optionally version: `name/version`) |
-| `module unload <name>` | Unload a single module |
-| `module list` | Show currently loaded modules |
-| `module purge` | Unload **everything** (clean slate) |
-| `module show <name>` | Show what a module sets (paths, env vars, conflicts) |
-| `module spider <name>` | Search all modules (Lmod) incl. hidden dependencies |
-| `module swap <a> <b>` | Replace module `a` with `b` |
+| `module load <name>` | Load a module (optionally `name/version`) |
+| `module unload <name>` | Unload a module |
+| `module list` | Show loaded modules |
+| `module purge` | Unload everything |
+| `module show <name>` | Show what a module sets |
 
 ```bash
-# Discover
 module avail
-module avail 2>&1 | grep -i openmpi      # search (module writes to stderr)
-
-# Load a toolchain
-module load gcc/12
-module load openmpi/4.1.5
-
-# Verify
+module avail 2>&1 | grep -i conda    # module output goes to stderr — use 2>&1
+module load spack                    # enable Spack
+module load miniconda                # enable the Conda/Python base
 module list
-
-# Reset when switching projects
-module purge
 ```
 
-!!! tip "`module avail` output goes to stderr"
-    Redirect it to filter: `module avail 2>&1 | grep -i <keyword>`.
+!!! tip "`module avail` prints to stderr"
+    To search it, redirect: `module avail 2>&1 | grep -i <keyword>`.
 
-## Typical software categories
+## Conda / Python (Miniconda)
 
-The exact names and versions come from `module avail` on the system, but you can
-generally expect:
-
-- **Compilers** — GNU (`gcc`, `gfortran`), Intel oneAPI (`icc`/`icx`, `ifort`/`ifx`),
-  possibly NVIDIA HPC SDK (`nvc`, `nvfortran`).
-- **MPI** — OpenMPI, Intel MPI, and/or MPICH.
-- **GPU** — CUDA toolkit(s), cuDNN, NCCL.
-- **Numerical libraries** — Intel MKL, OpenBLAS, FFTW, ScaLAPACK, HDF5, NetCDF.
-- **Applications** — common community codes (e.g. GROMACS, LAMMPS, OpenFOAM,
-  WRF, QuantumESPRESSO) where licensed/installed.
-- **Languages / tools** — Python (Conda), Julia, CMake, Git.
-
-Confirm what is actually installed:
+You typically land in a Conda **base** environment (`(base)` in your prompt).
+Load the module explicitly if needed:
 
 ```bash
-module avail 2>&1 | sort | less
-module spider gromacs        # (Lmod) find versions and how to load
+module load miniconda
+conda list                # packages in the current environment
+conda info --env          # list all environments
 ```
 
-## Version pinning and reproducibility
+!!! warning "Don't install into `base`"
+    Create your own named environments instead of modifying `base`:
+    ```bash
+    conda create --name myenv python=3.11
+    conda activate myenv
+    conda install numpy scipy
+    conda deactivate
+    ```
+    Environments can be large — mind your **50 GB `/home` quota**
+    (`du -sh ~/.conda`).
 
-Always load **explicit versions** in job scripts so results are reproducible and
-do not silently change when defaults are updated:
+## Pre-built ML/DL Conda environments
+
+PARAM Rudra ships ready-to-use, **GPU-enabled** Conda environments for machine
+learning, exposed as modules. Load one with `module load <ENV_NAME>`:
+
+| Category | Environment(s) | Version |
+| --- | --- | --- |
+| Deep learning | `Tensorflow` / `Tensorflow-gpu` | 2.15.0 |
+| | `Pytorch` / `Pytorch-gpu` | 2.2.0 / 2.2.1 |
+| | `Keras` / `Keras-gpu` | 3.0.5 |
+| | `Theano` / `Theano-gpu` | 1.0.5 |
+| | `Caffe` / `Caffe-gpu` | 1.0 |
+| Distributed DL | `Horovod` (TensorFlow / PyTorch) | 0.28.1 |
+| Data science | `Rapids` | 21.06 |
 
 ```bash
-# Good — explicit and reproducible
-module purge
-module load gcc/12
-module load openmpi/4.1.5
-module load fftw/3.3.10
-
-# Risky — 'default' version may change over time
-module load openmpi
+module load Pytorch        # activates the PyTorch environment
+python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-Record the environment inside your job output for provenance:
+Full ML/DL workflow — building your own environment, `sbatch` templates and
+launching Jupyter — is on the [Machine Learning / DL](machine-learning.md) page.
+
+## Reproducibility
+
+Always load **explicit versions** (modules) and **hashes** (Spack) in job scripts
+so runs don't silently change when defaults are updated, and record what was
+loaded for provenance:
 
 ```bash
-module list 2>&1        # captured in your SLURM .out file
+module list 2>&1          # captured into your SLURM .out file
+spack find -l <pkg>       # note the exact build hash
 ```
 
-## Module dependencies and conflicts
-
-- Some modules **require** others first (e.g. an MPI-built app needs its MPI and
-  compiler loaded). `module show <name>` reveals prerequisites and conflicts.
-- Loading two incompatible modules (e.g. two different MPI stacks) can break your
-  build or run. When in doubt, `module purge` and load a clean, minimal set.
-
-## Building your own module (advanced)
-
-If you install software yourself under `/home` or `/scratch`, you can expose it
-through a personal module tree:
-
-```bash
-mkdir -p $HOME/privatemodules
-module use $HOME/privatemodules      # add your tree to the search path
-```
-
-Place modulefiles there (Tcl or Lua) that set `PATH`, `LD_LIBRARY_PATH`, etc.
-For most users, Conda environments (see [Environment](environment.md)) are a
-simpler path for self-managed software.
-
-Next: [Building Software](building.md).
+Next: [Spack Packages](spack.md) or [Building Software](building.md).

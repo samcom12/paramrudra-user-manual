@@ -29,10 +29,13 @@ Customise your environment through the usual bash startup files in `/home`:
 
 ## File systems
 
-| Variable / Path | Use it for | Watch out for |
-| --- | --- | --- |
-| `/home/$USER` (`$HOME`) | Code, scripts, configs, small files | Quota-limited; not for heavy job I/O |
-| `/scratch/$USER` | Fast working space for running jobs | **3-month access-time purge**; not backed up |
+| Variable / Path | Use it for | Soft quota | Watch out for |
+| --- | --- | --- | --- |
+| `/home/$USER` (`$HOME`) | Code, scripts, configs, small files | **50 GB** | Not for heavy job I/O |
+| `/scratch/$USER` | Fast working space for running jobs | **200 GB** | **3-month access-time purge**; not backed up |
+
+Both live on the **Lustre** parallel filesystem. Stage inputs into `/scratch`,
+run there, then copy results you want to keep back to `/home` (or off-cluster).
 
 Recommended pattern:
 
@@ -47,14 +50,22 @@ cd /scratch/$USER/myproject/run01
 # 3. After the run, move important results to safe long-term storage
 ```
 
-Check your usage:
+Check your usage and quota:
 
 ```bash
 # Disk usage of a directory
 du -sh /scratch/$USER/*
 
-# Quota (command may vary by site; try these)
-quota -s 2>/dev/null || lfs quota -h -u $USER /scratch 2>/dev/null || df -h $HOME /scratch
+# Lustre quota (soft: 50 GB /home, 200 GB /scratch)
+lfs quota -h -u $USER /home
+lfs quota -h -u $USER /scratch
+```
+
+Grab C-DAC's worked sample programs (serial/OpenMP/MPI/CUDA/OpenACC/MKL) to get
+started:
+
+```bash
+cp -r /home/apps/Docs/samples/ ~/
 ```
 
 !!! danger "Back up your data"
@@ -86,8 +97,18 @@ module purge                 # remove all modules (clean slate)
 module show openmpi          # see what a module sets (paths, vars)
 ```
 
-The module system is covered in depth on the [Software Modules](modules.md)
-page.
+Software on PARAM Rudra is provided primarily through **[Spack](spack.md)**
+(`spack load ...`), with **Environment Modules** used to enable Spack, Miniconda
+and the ML/DL Conda environments:
+
+```bash
+module load spack
+. /home/apps/spack/share/spack/setup-env.sh   # enable Spack (note leading dot)
+spack find                                     # what's installed
+```
+
+The module system and Conda are covered on the [Modules & Conda](modules.md)
+page; Spack in depth on the [Spack Packages](spack.md) page.
 
 !!! tip "`module avail` prints to stderr"
     To search it, redirect stderr into the pipe: `module avail 2>&1 | grep -i cuda`.

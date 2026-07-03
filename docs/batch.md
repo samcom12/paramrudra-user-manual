@@ -41,6 +41,24 @@ scontrol show partition gpu       # authoritative limits, live
     designing a large run, and contact [support](support.md) if you need a
     multi-node CPU reservation.
 
+## QoS and scheduling policy
+
+| Policy | Value |
+| --- | --- |
+| Max simultaneous jobs / user | **10** |
+| Default max walltime / job | 4 days (`4-00:00:00`) |
+| **Default walltime if unspecified** | **2 hours** — always set `--time` explicitly |
+| Scheduling | SLURM **backfill** (accurate `--time` improves your turnaround) |
+
+Indicative node × time trade-offs under fair-use policy: an 8-node job for
+4 days, a 16-node job for 2 days, or a 32-node job for 1 day (subject to the
+per-partition node limits above). Need longer/bigger? Raise a ticket — handled
+case-by-case.
+
+!!! tip "Set an accurate walltime"
+    If you omit `--time`, your job gets only **2 hours** and will be killed when
+    it expires. Requesting *less* time also helps backfill schedule you sooner.
+
 ## Your account (`-A`) is mandatory
 
 Every job must charge a project/allocation account:
@@ -197,6 +215,40 @@ scancel -u $USER                      # cancel all your jobs
 Common **pending reasons**: `Priority` / `Resources` (waiting your turn),
 `QOSMaxWallDurationPerJobLimit` or `PartitionTimeLimit` (walltime too long),
 `AssocMaxJobsLimit` (too many jobs), `ReqNodeNotAvail` (nodes drained/down).
+
+### Holding, releasing and modifying jobs
+
+```bash
+scontrol hold <jobid>                       # pause a pending job (JobHeldUser)
+scontrol release <jobid>                    # release a held job
+scontrol update jobid=<jobid> set TimeLimit=4-00:00:00   # change an attribute
+scancel <jobid>                             # cancel
+```
+
+### Reservations
+
+If resources have been reserved for your account, use them:
+
+```bash
+scontrol show reservation                   # find reservations for your account
+sbatch --reservation=<name> job.slurm       # submit into a reservation
+```
+
+## Coming from PBS/Torque?
+
+| Concept | PBS/Torque | SLURM |
+| --- | --- | --- |
+| Directive | `#PBS` | `#SBATCH` |
+| Job id | `$PBS_JOBID` | `$SLURM_JOBID` |
+| Submit dir | `$PBS_O_WORKDIR` | `$SLURM_SUBMIT_DIR` |
+| Node list | `$PBS_NODEFILE` | `$SLURM_JOB_NODELIST` |
+| Job name | `-N name` | `--job-name=name` / `-J name` |
+| Node count | `-l nodes=N` | `--nodes=N` / `-N N` |
+| Cores/node | `-l ppn=N` | `--ntasks-per-node=N` |
+| Memory | `-l mem=MB` | `--mem=MB` / `--mem-per-cpu=MB` |
+| Walltime | `-l walltime=hh:mm:ss` | `--time=hh:mm:ss` |
+| Job array | `-t <spec>` | `--array=<spec>` / `-a` |
+| Delay start | `-a <time>` | `--begin=<time>` |
 
 ## Estimating start time
 

@@ -16,11 +16,14 @@ system.
 | Resource | Count | Node name prefix | Partition |
 | --- | --- | --- | --- |
 | **Total compute nodes** | **2,906** | — | — |
-| CPU-only nodes | 2,266 | `cbcn####` | `cpu` |
-| GPU-accelerated nodes | 320 | `cbgpu####` | `gpu` |
-| High-memory nodes | 320 | `cbhm####` | `hm` |
-| Interconnect | High-speed **InfiniBand (IB)** | — | — |
-| Login nodes | `login01`, `login02`, `login03`, … | — | — |
+| CPU-only nodes (2× Xeon Gold 6240R, 48c, 192 GB) | 2,266 | `cbcn####` | `cpu` |
+| GPU nodes (+ 2× NVIDIA A100 80 GB) | 320 | `cbgpu####` | `gpu` |
+| High-memory nodes (768 GB RAM) | 320 | `cbhm####` | `hm` |
+| Peak performance | ~20 PFLOPS | — | — |
+| Interconnect | **InfiniBand NDR** | — | — |
+| Storage | **Lustre** (10 PiB + 10 PiB archival) | — | — |
+| OS / scheduler | Rocky Linux 9.6 / SLURM 23.11.10 | — | — |
+| Login nodes | 14 (`login01…`) | — | — |
 
 <div class="grid cards" markdown>
 
@@ -46,7 +49,15 @@ system.
 
 - :material-expansion-card: **[GPU Computing](gpu.md)**
 
-    Requesting GPUs, CUDA MPS, multi-GPU and multi-node runs.
+    Requesting A100 GPUs, CUDA MPS, multi-GPU and multi-node runs.
+
+- :material-brain: **[Machine Learning / DL](machine-learning.md)**
+
+    Pre-built PyTorch/TensorFlow Conda envs and Jupyter on GPU nodes.
+
+- :material-flask: **[Applications](applications.md)**
+
+    GROMACS, LAMMPS, WRF, OpenFOAM, NAMD and more via Spack.
 
 </div>
 
@@ -66,13 +77,15 @@ system.
 ## Quick reference card
 
 ```bash
-# Connect (replace samirs with your username)
-ssh samirs@paramrudra.cdacb.in -p 4422
+# Connect (replace <username>; needs CAPTCHA + Google Authenticator OTP + password)
+ssh <username>@paramrudra.cdacb.in -p 4422
 
-# Environment modules
-module avail                 # list available modules
-module load <name>           # load a module
-module list                  # show loaded modules
+# Software: Spack (primary) + modules
+module load spack
+. /home/apps/spack/share/spack/setup-env.sh
+spack find                   # installed packages
+spack load <pkg>             # load one
+module load miniconda        # Python / Conda ML environments
 
 # SLURM essentials
 sinfo                        # partition / node status
@@ -90,8 +103,10 @@ scancel <jobid>              # cancel a job
 !!! note "About this manual"
     This is a **community/user-maintained** guide, structured after the
     excellent [JUPITER documentation](https://apps.fz-juelich.de/jsc/hps/jupiter/index.html)
-    at Jülich Supercomputing Centre and grounded in the live PARAM Rudra login
-    banner and SLURM configuration. Where a value is site-specific and may
-    change (exact per-node core counts, GPU model, quotas), the page tells you
-    the command to confirm it on the system. Corrections are welcome via
+    at Jülich Supercomputing Centre, and grounded in the **official C-DAC PARAM
+    Rudra User Manual** plus the live login banner and SLURM configuration. Where
+    a value may change over time (versions, quotas, hashes), the page tells you
+    the command to confirm it on the system. The authoritative source is always
+    the **login banner** and the C-DAC support desk (`rudrasupport@cdac.in`).
+    Corrections are welcome via
     [pull request](https://github.com/samcom12/paramrudra-user-manual).

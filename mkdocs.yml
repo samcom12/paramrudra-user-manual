@@ -89,11 +89,16 @@ nav:
   - Getting Access: access.md
   - System Configuration: configuration.md
   - Environment: environment.md
-  - Software Modules: modules.md
+  - Modules & Conda: modules.md
+  - Spack Packages: spack.md
   - Building Software: building.md
   - Batch System (SLURM): batch.md
   - GPU Computing: gpu.md
+  - Machine Learning / DL: machine-learning.md
+  - Applications: applications.md
   - Job Script Examples: examples.md
+  - Debugging: debugging.md
   - Data Management: data.md
   - Policies: policies.md
+  - Accounts & Acknowledgement: acknowledgement.md
   - FAQ & Support: support.md

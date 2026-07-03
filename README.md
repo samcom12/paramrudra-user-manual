@@ -13,14 +13,19 @@ at Jülich Supercomputing Centre.
 
 ## What's inside
 
-- **Getting Access** — SSH on port `4422`, key setup, file transfer
-- **System Configuration** — 2,906 nodes (CPU / GPU / high-memory), InfiniBand, storage
-- **Environment & Modules** — shell, Lmod modules, Conda, `/home` & `/scratch`
-- **Building Software** — compilers, MPI, CUDA, CMake/Make, Python, containers
-- **Batch System (SLURM)** — partitions (`cpu`/`hm`/`gpu`), scripts, dependencies, arrays
-- **GPU Computing** — GRES, multi-GPU, multi-node DDP, MPS
+- **Getting Access** — SSH on port `4422`, 2FA (Google Authenticator), file transfer
+- **System Configuration** — 2,906 nodes (2× Xeon 6240R; A100 GPUs; 768 GB HM), InfiniBand NDR, Lustre
+- **Environment / Modules & Conda** — shell, modules, Miniconda, `/home` & `/scratch` (50/200 GB)
+- **Spack Packages** — the primary package manager (`spack load`, environments, hashes)
+- **Building Software** — Intel/GNU/CUDA/MKL/OpenACC toolchains with real versions
+- **Batch System (SLURM)** — partitions (`cpu`/`hm`/`gpu`), QoS, dependencies, arrays, PBS→SLURM
+- **GPU Computing** — A100 `sm_80`, GRES, multi-GPU, multi-node DDP, MPS
+- **Machine Learning / DL** — pre-built PyTorch/TensorFlow envs, Jupyter via SSH tunnel
+- **Applications** — GROMACS, LAMMPS, NAMD, OpenFOAM, WRF, CP2K, NWChem via Spack
 - **Job Script Examples** — 10 ready-to-copy templates
-- **Data Management** — `/scratch` 3-month purge, quotas, efficient transfers
+- **Debugging** — gdb basics + job-failure diagnosis
+- **Data Management** — Lustre striping, `/scratch` 3-month purge, quotas, transfers
+- **Accounts & Acknowledgement** — NSM account process, CPU-hour accounting, NSM citation
 - **Policies & FAQ**
 
 ## Built with

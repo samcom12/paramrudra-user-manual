@@ -21,11 +21,21 @@ module list 2>&1                          # loaded environment
 ```
 
 !!! info "Where to reach support"
-    Use the official **C-DAC / NSM PARAM Rudra help desk** channel provided with
-    your account (support email / ticketing portal). Site-specific contact
-    details and any user forum are published by C-DAC — check the login banner
-    and your account welcome email. *(Maintainers: replace this note with the
-    official support email/URL for your deployment.)*
+    - **Ticketing portal:** <https://paramrudra.cdac.in/support> — sign in with
+      your **cluster username and password**, pick a Help Topic, and create a
+      ticket. You'll get an acknowledgement email with a ticket number; the
+      ticket stays open until the issue is resolved.
+    - **Email:** `rudrasupport@cdac.in` (technical support, license renewal,
+      feedback — include the page number when giving documentation feedback).
+    - **Account creation queries:** `nsmsupport@cdac.in`.
+
+### Create a support ticket
+
+1. Open <https://paramrudra.cdac.in/support> and click **Sign In** (top-right).
+2. Log in with your cluster **username and password**.
+3. Select a **Help Topic** and click **Create Ticket**.
+4. Fill in the issue details and submit — you'll receive an acknowledgement
+   email with the ticket number.
 
 ## Frequently asked questions
 
@@ -59,7 +69,7 @@ module list 2>&1                          # loaded environment
 ??? question "How do I know how many cores / how much memory a node has?"
     Confirm on an allocated node (not the login node): `lscpu`, `nproc`,
     `free -h`, `numactl --hardware`. See
-    [Per-node hardware](configuration.md#per-node-hardware).
+    [Per-node hardware](configuration.md#node-types-and-per-node-hardware).
 
 ??? question "Which GPU do the nodes have, and what `sm_XX` should I compile for?"
     Inside a GPU job run

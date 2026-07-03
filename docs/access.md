@@ -1,149 +1,143 @@
 # Getting Access
 
 This page explains how to obtain an account and connect to **PARAM Rudra** over
-SSH.
+SSH. Access uses **password authentication protected by Two-Factor Authentication
+(2FA)** with Google Authenticator, plus a CAPTCHA.
 
-## Prerequisites
+## 1. Get an account
 
-- An **approved user account** on PARAM Rudra (issued by the C-DAC / NSM HPC
-  team after your project or institutional request is granted).
-- An **SSH client**:
-    - **Linux / macOS** — OpenSSH is pre-installed (`ssh`).
-    - **Windows** — OpenSSH (built into Windows 10/11, usable from PowerShell or
-      Git Bash) or [PuTTY](https://www.putty.org/).
-- Network reachability to `paramrudra.cdacb.in` on **TCP port 4422**. If you are
-  off the institutional network you may need the approved VPN.
+Accounts are issued through the NSM user-creation portal:
+
+1. Go to **<https://services.nsmindia.in/userportal/account>** (linked from the
+   *Access to PARAM Systems* section of [nsmindia.in](https://nsmindia.in)).
+2. Register with your **official institutional email**, city and institute.
+3. Verify your email, complete the form, and upload the required documents
+   (ID proof, User Creation Form, etc.).
+4. Your HOD/PI verifies the request; the coordinator selects the cluster; higher
+   authority grants final approval.
+5. On approval you receive an email with your **user id, a temporary password**,
+   and the allocated cluster.
+
+Queries: `nsmsupport@cdac.in`. Full details on the
+[Accounts & Acknowledgement](acknowledgement.md) page.
+
+## 2. Install Google Authenticator (2FA)
+
+As part of the security policy, **2FA is mandatory for every login**. Before your
+first connection, install **Google Authenticator** on your phone:
+
+- Android — Google Play Store
+- iOS — Apple App Store
 
 ## Connection details
 
 | Item | Value |
 | --- | --- |
 | Hostname | `paramrudra.cdacb.in` |
-| SSH port | **4422** (non-default — you must pass `-p 4422`) |
-| Login nodes | `login01`, `login02`, `login03`, … (assigned on connect) |
-| Username | Your C-DAC-issued user id (examples below use `samirs`) |
+| SSH port | **4422** (non-default — always pass `-p 4422`) |
+| Login nodes | 14 nodes; you are assigned one (e.g. `login03`) |
+| Auth | Username + **CAPTCHA** + **6-digit OTP** (Google Authenticator) + password |
+| Support portal | `https://paramrudra.cdac.in/support` |
 
-## First login
+## 3. First login
 
-=== "Linux / macOS / Git Bash"
+=== "Linux / macOS / PowerShell / cmd"
 
     ```bash
-    ssh samirs@paramrudra.cdacb.in -p 4422
+    ssh <username>@paramrudra.cdacb.in -p 4422
     ```
 
-=== "Windows PowerShell"
+=== "PuTTY (Windows)"
 
-    ```powershell
-    ssh samirs@paramrudra.cdacb.in -p 4422
-    ```
+    1. **Host Name:** `paramrudra.cdacb.in`  **Port:** `4422`  **Type:** SSH
+    2. Click **Open** and enter your username.
 
-=== "PuTTY"
+=== "MobaXterm (Windows)"
 
-    1. **Host Name:** `paramrudra.cdacb.in`
-    2. **Port:** `4422`
-    3. **Connection type:** SSH
-    4. (Optional) Load your private key under *Connection → SSH → Auth →
-       Credentials*.
-    5. Click **Open** and log in with your username.
+    1. **Session → SSH**, remote host `paramrudra.cdacb.in`, specify username.
+    2. **Port:** `4422`. Start the session.
 
-On success you will land on one of the login nodes (for example `login03`) and
-see the system banner with node counts, partition limits and usage policies.
+The first login sequence:
+
+1. Enter the **CAPTCHA** shown in the terminal.
+2. A **QR code** is displayed. In Google Authenticator tap **➕ → Scan a QR code**
+   and scan it. A new entry appears (e.g. `Cluster: you@login`).
+3. Enter the **6-digit OTP** from the app to complete 2FA setup.
+4. Enter your **temporary password**. You are then required to **set a new
+   password** of your own.
+
+**Every subsequent login:** username → CAPTCHA → current 6-digit OTP → password.
 
 !!! success "You are on a login node"
-    Login nodes are for **editing files, compiling, managing data and submitting
-    jobs** — not for running computations. See [Policies](policies.md).
+    Login nodes are shared gateways for **editing, compiling, data transfer and
+    job submission** — never for running computations. See [Policies](policies.md).
 
-## Set up SSH keys (recommended)
+## Passwords
 
-Key-based authentication is more secure and convenient than typing a password
-each time.
+- Your new password must be strong (upper + lower case, digits, a few special
+  characters).
+- Passwords are valid for **90 days**; you are prompted to change on expiry.
+- Change it any time with:
+  ```bash
+  passwd
+  ```
+- **Forgot your password?** Raise a ticket at
+  `https://paramrudra.cdac.in/support`; after email verification the support team
+  resets it and emails you a temporary password to change on next login.
 
-### 1. Generate a key pair (on your local machine)
+## Optional: SSH config convenience
 
-Use a modern Ed25519 key protected by a strong passphrase:
-
-```bash
-ssh-keygen -a 100 -t ed25519 -C "you@example.org" -f ~/.ssh/id_ed25519_rudra
-```
-
-This creates:
-
-- `~/.ssh/id_ed25519_rudra` — your **private** key (never share it).
-- `~/.ssh/id_ed25519_rudra.pub` — your **public** key (safe to copy to servers).
-
-### 2. Install the public key on PARAM Rudra
-
-```bash
-ssh-copy-id -i ~/.ssh/id_ed25519_rudra.pub -p 4422 samirs@paramrudra.cdacb.in
-```
-
-If `ssh-copy-id` is unavailable (e.g. on Windows), append the public key
-manually:
-
-```bash
-cat ~/.ssh/id_ed25519_rudra.pub | ssh -p 4422 samirs@paramrudra.cdacb.in \
-  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
-```
-
-### 3. Add a convenient host alias
-
-Create/edit `~/.ssh/config` on your local machine:
+You can still shorten the command with a host alias in `~/.ssh/config` on your
+local machine (you will still be prompted for CAPTCHA/OTP/password):
 
 ```ssh-config
 Host rudra
     HostName paramrudra.cdacb.in
     Port 4422
-    User samirs
-    IdentityFile ~/.ssh/id_ed25519_rudra
-    IdentitiesOnly yes
-    # Reuse one connection for many sessions (faster, fewer prompts)
-    ControlMaster auto
-    ControlPath ~/.ssh/cm-%r@%h:%p
-    ControlPersist 10m
+    User <username>
     ServerAliveInterval 60
 ```
 
-Now you can simply run:
+Then just `ssh rudra`.
 
-```bash
-ssh rudra
-```
-
-!!! tip "Protect your private key"
-    - Always set a passphrase; unlock it once per session with `ssh-agent`:
-      ```bash
-      eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519_rudra
-      ```
-    - Keep permissions tight: `chmod 700 ~/.ssh` and `chmod 600 ~/.ssh/id_ed25519_rudra`.
-    - Never copy a private key onto the cluster or into a git repository.
+!!! note "2FA and SSH keys"
+    Because interactive 2FA (OTP + CAPTCHA) is enforced at login, plain SSH
+    public-key login is generally **not** the access path here — use your
+    password + Authenticator OTP as above. If you have a specific need for
+    key-based automation, ask the [support desk](support.md) what is permitted.
 
 ## Copying files in and out
 
-Basic transfers (see [Data Management](data.md) for large/parallel transfers):
+Use port **4422** for all transfers (SFTP too — not port 22).
 
 ```bash
-# Upload a file to your home directory
-scp -P 4422 ./input.dat samirs@paramrudra.cdacb.in:/home/samirs/
+# Upload (note: scp uses -P, capital)
+scp -r -P 4422 ./localdir <username>@paramrudra.cdacb.in:/home/<username>/
 
 # Download results
-scp -P 4422 samirs@paramrudra.cdacb.in:/home/samirs/run/out.nc ./
+scp -P 4422 <username>@paramrudra.cdacb.in:/scratch/<username>/out.nc ./
 
-# Sync a directory efficiently (resumable, only changed files)
-rsync -avP -e "ssh -p 4422" ./project/ samirs@paramrudra.cdacb.in:/scratch/samirs/project/
+# Efficient, resumable sync (rsync/ssh use -p, lowercase)
+rsync -avP -e "ssh -p 4422" ./project/ <username>@paramrudra.cdacb.in:/scratch/<username>/project/
 ```
 
-!!! note "`scp` uses `-P` (capital), `ssh` uses `-p` (lowercase)"
-    A very common source of confusion. For `scp`/`sftp` the port flag is
-    **`-P 4422`**; for `ssh`/`rsync -e ssh` it is **`-p 4422`**.
+GUI tools that work well on Windows:
+
+- **WinSCP** — drag-and-drop file transfer (set the port to **4422**).
+- **MobaXterm** — integrated SSH terminal + SFTP browser.
+
+!!! note "`scp` uses `-P`, `ssh`/`rsync` use `-p`"
+    A common trip-up: for `scp`/`sftp` the port flag is uppercase **`-P 4422`**;
+    for `ssh` and `rsync -e ssh` it is lowercase **`-p 4422`**.
 
 ## Troubleshooting login
 
 | Symptom | Likely cause / fix |
 | --- | --- |
-| `Connection timed out` | Port 4422 blocked by your firewall/VPN, or wrong network. Confirm you can reach the host and that VPN is connected. |
-| `Permission denied (publickey,password)` | Wrong username, key not installed, or key permissions too open. Re-check steps 1–3 above. |
-| `Too many authentication failures` | SSH is offering too many keys. Add `IdentitiesOnly yes` (as in the config above) or use `-o IdentitiesOnly=yes`. |
-| Host key changed warning | Only expected after a legitimate rebuild. If unsure, **contact support** before removing the old key — do not blindly `ssh-keygen -R`. |
-| Password rejected repeatedly | Account may be locked or expired. Contact the [support desk](support.md). |
+| `Connection timed out` | Port 4422 blocked by your firewall/VPN, or wrong network. Ensure your network/firewall allows access to the HPC system. |
+| OTP rejected | Phone clock drift, or wrong Authenticator entry. Ensure automatic time is on; use the entry created for this cluster. |
+| Password rejected on first login | Use the exact temporary password from the welcome email; you will be forced to change it. |
+| Locked out / lost 2FA device | Raise a ticket at `https://paramrudra.cdac.in/support`. |
+| `Permission denied` repeatedly | Account may be expired (90-day password) — reset via ticket. |
 
 Next: set up your working [Environment](environment.md).
