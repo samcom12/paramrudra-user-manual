@@ -4,10 +4,9 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE)
 
 A free, community-maintained user manual for **PARAM Rudra**, a ~20 PetaFlop
-supercomputer under the National Supercomputing Mission (NSM) at C-DAC. The
-documentation is structured after the excellent
-[JUPITER user documentation](https://apps.fz-juelich.de/jsc/hps/jupiter/index.html)
-at Jülich Supercomputing Centre.
+supercomputer under the National Supercomputing Mission (NSM) at C-DAC. It is
+grounded in the official C-DAC PARAM Rudra User Manual plus the live login banner
+and SLURM configuration.
 
 📖 **Live site:** https://samcom12.github.io/paramrudra-user-manual/
 📄 **PDF:** [Download the full manual](https://samcom12.github.io/paramrudra-user-manual/assets/PARAM-Rudra-20PF-User-Manual.pdf) (auto-generated each build)

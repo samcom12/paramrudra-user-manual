@@ -112,12 +112,11 @@ scancel <jobid>              # cancel a job
 ---
 
 !!! note "About this manual"
-    This is a **community/user-maintained** guide, structured after the
-    excellent [JUPITER documentation](https://apps.fz-juelich.de/jsc/hps/jupiter/index.html)
-    at Jülich Supercomputing Centre, and grounded in the **official C-DAC PARAM
-    Rudra User Manual** plus the live login banner and SLURM configuration. Where
-    a value may change over time (versions, quotas, hashes), the page tells you
-    the command to confirm it on the system. The authoritative source is always
-    the **login banner** and the C-DAC support desk (`rudrasupport@cdac.in`).
+    This is a **community/user-maintained** guide for the C-DAC PARAM Rudra
+    20 PetaFlop supercomputer, grounded in the **official C-DAC PARAM Rudra User
+    Manual** plus the live login banner and SLURM configuration. Where a value
+    may change over time (versions, quotas, hashes), the page tells you the
+    command to confirm it on the system. The authoritative source is always the
+    **login banner** and the C-DAC support desk (`rudrasupport@cdac.in`).
     Corrections are welcome via
     [pull request](https://github.com/samcom12/paramrudra-user-manual).
