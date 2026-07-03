@@ -1,0 +1,21 @@
+/* PARAM Rudra manual — small visual tweaks */
+
+:root {
+  --md-primary-fg-color: #1f3a93;
+  --md-accent-fg-color: #2453ff;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: #fff;
+}
+
+/* Tighten spacing of stat cards on the home page */
+.grid.cards > ul > li {
+  border-radius: 0.4rem;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  font-size: 0.72rem;
+}

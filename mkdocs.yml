@@ -1,0 +1,99 @@
+site_name: PARAM Rudra (20 PF) User Manual
+site_description: >-
+  User guide for the PARAM Rudra 20 PetaFlop supercomputer at C-DAC — access,
+  environment, software, SLURM batch system, GPU computing and data management.
+site_author: PARAM Rudra HPC Team
+site_url: https://samcom12.github.io/paramrudra-user-manual/
+
+repo_name: samcom12/paramrudra-user-manual
+repo_url: https://github.com/samcom12/paramrudra-user-manual
+edit_uri: edit/main/docs/
+
+copyright: >-
+  This is a community/user-maintained guide. Verify site-specific values with the
+  official C-DAC / NSM support desk.
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.keys
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/samcom12/paramrudra-user-manual
+  generator: false
+
+nav:
+  - Home: index.md
+  - Getting Access: access.md
+  - System Configuration: configuration.md
+  - Environment: environment.md
+  - Software Modules: modules.md
+  - Building Software: building.md
+  - Batch System (SLURM): batch.md
+  - GPU Computing: gpu.md
+  - Job Script Examples: examples.md
+  - Data Management: data.md
+  - Policies: policies.md
+  - FAQ & Support: support.md
