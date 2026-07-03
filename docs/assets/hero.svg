@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="C-DAC PARAM Rudra 20 PetaFlop Supercomputer">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#141c47"/>
+      <stop offset="0.55" stop-color="#1f2f7a"/>
+      <stop offset="1" stop-color="#2a49b8"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5f7dff"/>
+      <stop offset="1" stop-color="#9ec1ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" rx="16" fill="url(#bg)"/>
+
+  <!-- interconnect fabric motif -->
+  <g stroke="#5f7dff" stroke-width="1.2" opacity="0.28" fill="none">
+    <path d="M820 60 L920 120 L1020 60 L1120 120"/>
+    <path d="M820 180 L920 120 L1020 180 L1120 120"/>
+    <path d="M880 250 L980 190 L1080 250"/>
+  </g>
+  <g fill="#9ec1ff" opacity="0.55">
+    <circle cx="820" cy="60" r="4"/><circle cx="1020" cy="60" r="4"/>
+    <circle cx="820" cy="180" r="4"/><circle cx="1020" cy="180" r="4"/>
+    <circle cx="1120" cy="120" r="5"/><circle cx="920" cy="120" r="6"/>
+    <circle cx="980" cy="190" r="4"/><circle cx="880" cy="250" r="4"/><circle cx="1080" cy="250" r="4"/>
+  </g>
+
+  <!-- eyebrow -->
+  <text x="64" y="86" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#9ec1ff"
+        letter-spacing="3" font-weight="600">C-DAC · NATIONAL SUPERCOMPUTING MISSION</text>
+
+  <!-- title -->
+  <text x="62" y="158" font-family="Segoe UI, Arial, sans-serif" font-size="72" fill="#ffffff"
+        font-weight="800" letter-spacing="1">PARAM RUDRA</text>
+
+  <!-- underline accent -->
+  <rect x="64" y="178" width="360" height="5" rx="2.5" fill="url(#accent)"/>
+
+  <!-- subtitle -->
+  <text x="64" y="224" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#dfe6ff"
+        font-weight="500">20 PetaFlop Supercomputer &#8212; User Manual</text>
+
+  <!-- stat chips -->
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <g>
+      <rect x="64" y="248" width="150" height="34" rx="17" fill="#ffffff" opacity="0.12"/>
+      <text x="139" y="270" text-anchor="middle" font-size="15" fill="#eaf0ff" font-weight="600">2,906 nodes</text>
+    </g>
+    <g>
+      <rect x="224" y="248" width="176" height="34" rx="17" fill="#ffffff" opacity="0.12"/>
+      <text x="312" y="270" text-anchor="middle" font-size="15" fill="#eaf0ff" font-weight="600">640 NVIDIA A100</text>
+    </g>
+    <g>
+      <rect x="410" y="248" width="200" height="34" rx="17" fill="#ffffff" opacity="0.12"/>
+      <text x="510" y="270" text-anchor="middle" font-size="15" fill="#eaf0ff" font-weight="600">InfiniBand NDR · Lustre</text>
+    </g>
+  </g>
+</svg>

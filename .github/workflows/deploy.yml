@@ -28,11 +28,29 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install dependencies
+      - name: Install WeasyPrint system libraries (for PDF export)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
+            libcairo2 libgdk-pixbuf-2.0-0 libffi-dev fonts-dejavu-core
+
+      - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Build site
+      - name: Build site (always succeeds)
         run: mkdocs build --site-dir _site
+
+      - name: Generate PDF and overlay it (non-blocking)
+        continue-on-error: true
+        env:
+          ENABLE_PDF_EXPORT: "1"
+        run: |
+          mkdocs build --site-dir _pdfbuild
+          mkdir -p _site/assets
+          cp _pdfbuild/assets/PARAM-Rudra-20PF-User-Manual.pdf _site/assets/ \
+            && echo "PDF overlaid into _site/assets/" \
+            || echo "PDF not produced; site still deploys without it"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

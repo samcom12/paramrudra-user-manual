@@ -100,8 +100,8 @@ module list 2>&1                          # loaded environment
 
 This guide is open and community-maintained. Spot something outdated or wrong?
 
-- Open an issue or pull request at
-  [github.com/samcom12/paramrudra-user-manual](https://github.com/samcom12/paramrudra-user-manual).
+- Open an issue or pull request in the
+  [project's GitHub repository](https://github.com/samcom12/paramrudra-user-manual).
 - Each page has an ✏️ **edit** link (top right) that takes you straight to the
   source on GitHub.
 

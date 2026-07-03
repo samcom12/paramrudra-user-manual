@@ -1,17 +1,19 @@
-site_name: PARAM Rudra (20 PF) User Manual
+site_name: C-DAC PARAM Rudra — 20 PetaFlop Supercomputer
 site_description: >-
-  User guide for the PARAM Rudra 20 PetaFlop supercomputer at C-DAC — access,
-  environment, software, SLURM batch system, GPU computing and data management.
-site_author: PARAM Rudra HPC Team
+  Official-style user guide for the C-DAC PARAM Rudra 20 PetaFlop supercomputer
+  (National Supercomputing Mission) — access, environment, Spack, SLURM batch
+  system, GPU computing, applications and data management.
+site_author: C-DAC HPC Technologies · PARAM Rudra (20 PF) · National Supercomputing Mission
 site_url: https://samcom12.github.io/paramrudra-user-manual/
 
-repo_name: samcom12/paramrudra-user-manual
+repo_name: C-DAC PARAM Rudra · 20 PF
 repo_url: https://github.com/samcom12/paramrudra-user-manual
 edit_uri: edit/main/docs/
 
 copyright: >-
-  This is a community/user-maintained guide. Verify site-specific values with the
-  official C-DAC / NSM support desk.
+  C-DAC PARAM Rudra — 20 PetaFlop Supercomputer · National Supercomputing Mission.
+  Community-maintained user guide; verify site-specific values with the C-DAC
+  support desk (rudrasupport@cdac.in).
 
 theme:
   name: material
@@ -46,6 +48,8 @@ theme:
         name: Switch to light mode
   icon:
     repo: fontawesome/brands/github
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
 
 extra_css:
   - stylesheets/extra.css
@@ -77,6 +81,16 @@ markdown_extensions:
 
 plugins:
   - search
+  - with-pdf:
+      enabled_if_env: ENABLE_PDF_EXPORT
+      output_path: assets/PARAM-Rudra-20PF-User-Manual.pdf
+      cover_title: PARAM Rudra — 20 PetaFlop Supercomputer
+      cover_subtitle: C-DAC · National Supercomputing Mission · User Manual
+      author: C-DAC HPC Technologies
+      copyright: C-DAC PARAM Rudra (20 PF) · National Supercomputing Mission
+      toc_level: 3
+      ordered_chapter_level: 2
+      two_columns_level: 0
 
 extra:
   social:
@@ -95,7 +109,14 @@ nav:
   - Batch System (SLURM): batch.md
   - GPU Computing: gpu.md
   - Machine Learning / DL: machine-learning.md
-  - Applications: applications.md
+  - Applications:
+      - Overview: applications/index.md
+      - GROMACS: applications/gromacs.md
+      - LAMMPS: applications/lammps.md
+      - NAMD: applications/namd.md
+      - OpenFOAM: applications/openfoam.md
+      - WRF: applications/wrf.md
+      - Quantum Chemistry & Others: applications/quantum-chemistry.md
   - Job Script Examples: examples.md
   - Debugging: debugging.md
   - Data Management: data.md

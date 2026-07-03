@@ -19,7 +19,7 @@ the [hardware you confirmed](configuration.md#node-types-and-per-node-hardware).
     spack load intel-oneapi-mpi        /<hash>
     ```
     For ready-made application scripts (GROMACS, LAMMPS, WRF …) see
-    [Applications](applications.md).
+    [Applications](applications/index.md).
 
 ## 1. Serial / single-core job (`cpu`)
 

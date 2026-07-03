@@ -1,10 +1,15 @@
 # PARAM Rudra — 20 PetaFlop System User Manual
 
+![C-DAC PARAM Rudra — 20 PetaFlop Supercomputer](assets/hero.svg){ loading=lazy }
+
 Welcome to the user documentation for **PARAM Rudra**, a ~20 PetaFlop
 supercomputer operated under the **National Supercomputing Mission (NSM)** by
 **C-DAC**. This guide walks you through everything from your first login to
 running large-scale CPU, high-memory and GPU jobs through the SLURM batch
 system.
+
+[:material-file-pdf-box: Download the full manual (PDF)](assets/PARAM-Rudra-20PF-User-Manual.pdf){ .md-button .md-button--primary }
+[:material-server-network: System architecture](configuration.md#architecture-diagram){ .md-button }
 
 !!! tip "New here? Start with these three pages"
     1. [Getting Access](access.md) — connect over SSH (port **4422**).
@@ -35,13 +40,13 @@ system.
 
     Node types, partitions, interconnect and storage layout.
 
-- :material-package-variant: **[Software Modules](modules.md)**
+- :material-package-variant: **[Modules & Spack](modules.md)**
 
-    Find and load compilers, libraries and applications with `module`.
+    Load compilers, libraries and applications with `module` and `spack`.
 
 - :material-hammer-wrench: **[Building Software](building.md)**
 
-    Compilers, MPI wrappers, CUDA, CMake/Make, Python and Conda.
+    Intel/GNU compilers, MPI wrappers, CUDA (A100 `sm_80`), MKL, OpenACC.
 
 - :material-calendar-clock: **[Batch System (SLURM)](batch.md)**
 
@@ -55,7 +60,7 @@ system.
 
     Pre-built PyTorch/TensorFlow Conda envs and Jupyter on GPU nodes.
 
-- :material-flask: **[Applications](applications.md)**
+- :material-flask: **[Applications](applications/index.md)**
 
     GROMACS, LAMMPS, WRF, OpenFOAM, NAMD and more via Spack.
 

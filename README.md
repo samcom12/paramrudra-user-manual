@@ -10,6 +10,7 @@ documentation is structured after the excellent
 at Jülich Supercomputing Centre.
 
 📖 **Live site:** https://samcom12.github.io/paramrudra-user-manual/
+📄 **PDF:** [Download the full manual](https://samcom12.github.io/paramrudra-user-manual/assets/PARAM-Rudra-20PF-User-Manual.pdf) (auto-generated each build)
 
 ## What's inside
 

@@ -142,7 +142,7 @@ srun --mpi=auto -n $SLURM_NTASKS ./my_app
 ```
 
 See [Building Software](building.md) for compiling your own code against these
-Spack toolchains, and [Applications](applications.md) for ready-made
+Spack toolchains, and [Applications](applications/index.md) for ready-made
 application scripts (GROMACS, LAMMPS, WRF, …).
 
 !!! note "Packaging (advanced)"

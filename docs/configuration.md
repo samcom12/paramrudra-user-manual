@@ -5,6 +5,10 @@ designed and implemented by the HPC Technologies group of C-DAC under the
 National Supercomputing Mission (NSM). It is a heterogeneous, hybrid system based
 on **Intel Xeon (2nd Gen Cascade Lake) processors** and **NVIDIA A100 GPUs**.
 
+## Architecture diagram
+
+![PARAM Rudra system architecture — users connect via SSH/2FA to login and service nodes, which reach CPU, GPU and high-memory compute over the InfiniBand NDR fabric, backed by Lustre storage](assets/architecture.svg){ loading=lazy }
+
 ## Headline numbers
 
 | Metric | Value |
