@@ -1,8 +1,8 @@
 # Accounts & Acknowledgement
 
 <div class="cobrand" markdown>
-[![Centre for Development of Advanced Computing (C-DAC)](assets/logo-cdac.svg)](https://www.cdac.in)
-[![National Supercomputing Mission (NSM)](assets/logo-nsm.svg)](https://nsmindia.in)
+[![Centre for Development of Advanced Computing (C-DAC)](assets/logo-cdac.png)](https://www.cdac.in)
+[![National Supercomputing Mission (NSM)](assets/logo-nsm.png)](https://nsmindia.in)
 </div>
 
 ## Creating an account

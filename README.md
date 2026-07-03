@@ -43,17 +43,13 @@ mkdocs serve          # live preview at http://127.0.0.1:8000
 mkdocs build          # static site into ./site
 ```
 
-## Official C-DAC / NSM logos
+## C-DAC / NSM logos
 
-The co-branding strip uses **placeholder** logo files
-(`docs/assets/logo-cdac.svg`, `docs/assets/logo-nsm.svg`) — generic typographic
-badges, not the official trademarked artwork. To show the real logos, replace
-those two files with the official C-DAC and NSM logo images (e.g. `logo-cdac.png`
-from [cdac.in](https://www.cdac.in) and `logo-nsm.png` from
-[nsmindia.in](https://nsmindia.in)). If you change the file extension, update the
-`assets/logo-cdac.svg` / `assets/logo-nsm.svg` references in `docs/index.md` and
-`docs/acknowledgement.md` accordingly. The C-DAC and NSM logos are registered
-trademarks; use them in accordance with C-DAC/NSM branding guidelines.
+The co-branding strip uses the official logo files
+(`docs/assets/logo-cdac.png`, `docs/assets/logo-nsm.png`), referenced from
+`docs/index.md` and `docs/acknowledgement.md`. The C-DAC and NSM logos are
+registered trademarks; use them in accordance with C-DAC/NSM branding
+guidelines.
 
 ## Contributing
 

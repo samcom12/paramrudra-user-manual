@@ -12,8 +12,8 @@ system.
 [:material-server-network: System architecture](configuration.md#architecture-diagram){ .md-button }
 
 <div class="cobrand" markdown>
-[![Centre for Development of Advanced Computing (C-DAC)](assets/logo-cdac.svg)](https://www.cdac.in)
-[![National Supercomputing Mission (NSM)](assets/logo-nsm.svg)](https://nsmindia.in)
+[![Centre for Development of Advanced Computing (C-DAC)](assets/logo-cdac.png)](https://www.cdac.in)
+[![National Supercomputing Mission (NSM)](assets/logo-nsm.png)](https://nsmindia.in)
 <span class="cobrand-caption">PARAM Rudra is implemented by C-DAC under the National Supercomputing Mission, supported by MeitY and DST, Government of India.</span>
 </div>
 
