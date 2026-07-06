@@ -53,8 +53,11 @@ guidelines.
 
 ## Contributing
 
-Corrections and additions are welcome — open an issue or a pull request. Every
-page on the live site has an ✏️ edit link to its source.
+Corrections and additions are welcome. **Direct pushes to `main` are disabled** —
+all changes land through a **reviewed pull request** (fork → edit → PR, or open an
+issue). At least one approving review is required before merge, after which CI
+rebuilds and redeploys the site. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+full workflow. Every page on the live site also has an ✏️ edit link to its source.
 
 > **Note:** This is a **community/user-maintained** guide, grounded in the live
 > PARAM Rudra login banner and SLURM configuration. It is **not** an official
