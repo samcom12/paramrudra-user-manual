@@ -1,0 +1,30 @@
+name: PR Build Check
+
+# Validates that the documentation builds on every pull request to main.
+# This check is required by branch protection before a PR can be merged.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build documentation (validation only, no deploy)
+        # PDF export stays disabled here (ENABLE_PDF_EXPORT unset), so WeasyPrint
+        # system libraries are not needed for the PR check.
+        run: mkdocs build --site-dir _pr_site
