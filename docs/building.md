@@ -171,5 +171,9 @@ cmake --build build -j $(nproc)
 cmake --install build
 ```
 
+For compiler-optimization guidance (GCC / Intel LLVM / NVHPC flags, AVX-512
+tuning), OpenMP and MPI tuning, and worked case studies, see
+[Best Practices & Performance](best-practices.md).
+
 Next: submit your build to the [Batch System](batch.md), or see
 [Job Script Examples](examples.md).

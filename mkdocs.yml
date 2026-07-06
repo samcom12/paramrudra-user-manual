@@ -119,6 +119,7 @@ nav:
       - WRF: applications/wrf.md
       - Quantum Chemistry & Others: applications/quantum-chemistry.md
   - Job Script Examples: examples.md
+  - Best Practices & Performance: best-practices.md
   - Debugging: debugging.md
   - Data Management: data.md
   - Policies: policies.md

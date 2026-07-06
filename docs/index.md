@@ -67,6 +67,10 @@ supported by MeitY and DST, Government of India.*{ .cobrand-caption }
 
     GROMACS, LAMMPS, WRF, OpenFOAM, NAMD and more via Spack.
 
+- :material-speedometer: **[Best Practices & Performance](best-practices.md)**
+
+    Compiler tuning (GCC/Intel LLVM/NVHPC), OpenMP, MPI, case studies.
+
 </div>
 
 ## The golden rules
