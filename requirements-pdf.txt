@@ -1,0 +1,8 @@
+# PDF export toolchain — installed ONLY in the isolated, non-blocking PDF step.
+# mkdocs-with-pdf (0.9.3, 2021) computes TOC page numbers via WeasyPrint's
+# bookmark API, which changed in WeasyPrint 53+ (producing "page 0" entries).
+# Pin WeasyPrint to the version the plugin targets. This needs Python 3.9.
+mkdocs-material>=9.5
+pymdown-extensions>=10.7
+mkdocs-with-pdf==0.9.3
+weasyprint==52.5

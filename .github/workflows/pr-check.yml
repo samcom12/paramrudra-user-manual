@@ -25,6 +25,5 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build documentation (validation only, no deploy)
-        # PDF export stays disabled here (ENABLE_PDF_EXPORT unset), so WeasyPrint
-        # system libraries are not needed for the PR check.
+        # The core config (mkdocs.yml) has no PDF plugin, so no WeasyPrint needed.
         run: mkdocs build --site-dir _pr_site

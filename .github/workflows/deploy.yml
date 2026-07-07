@@ -26,27 +26,34 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          # WeasyPrint 52.5 (pinned for correct PDF TOC page numbers) needs Python 3.9.
+          python-version: "3.9"
 
-      - name: Install WeasyPrint system libraries (for PDF export)
+      - name: Install core docs dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build site (core config, no PDF — always succeeds)
+        run: mkdocs build --site-dir _site
+
+      # --- PDF export, fully isolated and non-blocking ---
+      # Uses the separate mkdocs.pdf.yml config and pinned WeasyPrint. If any of
+      # this fails, the site has already been built above and still deploys.
+      - name: Install WeasyPrint system libraries
+        continue-on-error: true
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 \
-            libcairo2 libgdk-pixbuf-2.0-0 libffi-dev fonts-dejavu-core
-
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
-
-      - name: Build site (always succeeds)
-        run: mkdocs build --site-dir _site
+            libcairo2 libgdk-pixbuf-2.0-0 libffi-dev \
+            libfontconfig1 libharfbuzz0b shared-mime-info fonts-dejavu-core
 
       - name: Generate PDF and overlay it (non-blocking)
         continue-on-error: true
         env:
           ENABLE_PDF_EXPORT: "1"
         run: |
-          mkdocs build --site-dir _pdfbuild
+          pip install -r requirements-pdf.txt
+          mkdocs build -f mkdocs.pdf.yml --site-dir _pdfbuild
           mkdir -p _site/assets
           cp _pdfbuild/assets/PARAM-Rudra-20PF-User-Manual.pdf _site/assets/ \
             && echo "PDF overlaid into _site/assets/" \

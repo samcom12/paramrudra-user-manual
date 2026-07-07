@@ -1,4 +1,4 @@
+# Core docs toolchain — used for the site build and the PR build check.
+# Kept free of the PDF stack so the site never depends on WeasyPrint.
 mkdocs-material>=9.5
 pymdown-extensions>=10.7
-mkdocs-with-pdf>=0.9.3
-weasyprint>=60

@@ -1,0 +1,17 @@
+# PDF-export configuration. Inherits everything from mkdocs.yml and adds the
+# with-pdf plugin. Built only in the isolated, non-blocking CI PDF step with
+# ENABLE_PDF_EXPORT=1 and the pinned WeasyPrint (see requirements-pdf.txt).
+INHERIT: mkdocs.yml
+
+plugins:
+  - search
+  - with-pdf:
+      enabled_if_env: ENABLE_PDF_EXPORT
+      output_path: assets/PARAM-Rudra-20PF-User-Manual.pdf
+      cover_title: PARAM Rudra — 20 PetaFlop Supercomputer
+      cover_subtitle: C-DAC · National Supercomputing Mission · User Manual
+      author: C-DAC HPC Technologies
+      copyright: C-DAC PARAM Rudra (20 PF) · National Supercomputing Mission
+      toc_level: 3
+      ordered_chapter_level: 2
+      two_columns_level: 0

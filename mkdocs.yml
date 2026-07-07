@@ -82,16 +82,9 @@ markdown_extensions:
 
 plugins:
   - search
-  - with-pdf:
-      enabled_if_env: ENABLE_PDF_EXPORT
-      output_path: assets/PARAM-Rudra-20PF-User-Manual.pdf
-      cover_title: PARAM Rudra — 20 PetaFlop Supercomputer
-      cover_subtitle: C-DAC · National Supercomputing Mission · User Manual
-      author: C-DAC HPC Technologies
-      copyright: C-DAC PARAM Rudra (20 PF) · National Supercomputing Mission
-      toc_level: 3
-      ordered_chapter_level: 2
-      two_columns_level: 0
+  # NOTE: the PDF export (mkdocs-with-pdf) is intentionally NOT enabled here so
+  # the site build and PR check never depend on WeasyPrint. PDF generation uses
+  # the separate mkdocs.pdf.yml config in an isolated, non-blocking CI step.
 
 extra:
   social:
