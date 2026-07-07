@@ -99,11 +99,12 @@ module list 2>&1                          # loaded environment
 ## Contributing to this manual
 
 This guide is open and community-maintained. Spot something outdated or wrong?
+See the **[Contributing](contributing.md)** page for stepwise instructions.
 
-- Open an issue or pull request in the
+- Quickest way: click the ✏️ **edit** link (top right of any page) → propose a
+  change → it becomes a reviewed pull request.
+- Or open an issue in the
   [project's GitHub repository](https://github.com/samcom12/paramrudra-user-manual).
-- Each page has an ✏️ **edit** link (top right) that takes you straight to the
-  source on GitHub.
 
 !!! warning "Never include secrets in a contribution"
     Do not paste passwords, SSH private keys, or access tokens into issues, pull
