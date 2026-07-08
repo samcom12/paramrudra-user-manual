@@ -4,7 +4,7 @@ This page explains how to obtain an account and connect to **PARAM Rudra** over
 SSH. Access uses **password authentication protected by Two-Factor Authentication
 (2FA)** with Google Authenticator, plus a CAPTCHA.
 
-## 1. Get an account
+## 1. Get an account for user
 
 Accounts are issued through the NSM user-creation portal:
 
