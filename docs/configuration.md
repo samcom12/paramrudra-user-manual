@@ -31,7 +31,7 @@ on **Intel Xeon (2nd Gen Cascade Lake) processors** and **NVIDIA A100 GPUs**.
 | **CPU compute** | 2,266 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB DDR4-2933 | 800 GB | — | `cpu` |
 | **GPU compute** | 320 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB DDR4-2933 | 800 GB | **2× NVIDIA A100 (80 GB HBM2e)** | `gpu` |
 | **High-memory** | 320 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | **768 GB** | 800 GB | — | `hm` |
-| Login | 14 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB | — | — (interactive gateway) |
+| **Login** | 14 | 2× Intel Xeon Gold 6240R @ 2.4 GHz | 48 | 192 GB | — | — (interactive gateway) |
 
 !!! info "Node naming convention"
     Hostnames encode the class: `cb` (C-DAC Bengaluru) + class
@@ -63,6 +63,12 @@ is 13,824 CUDA cores and 160 GB of GPU memory per node.
 
 ## Storage
 
+- Based on the Lustre parallel file system.
+- The storage subsystem provides a total usable capacity of 20 PiB Primary Storage and 10 PiB Archival Storage.
+- Of the 20 PiB primary storage, 18 PiB delivers a throughput of 150 GB/s, while the remaining 2 PiB is flash-based and provides a throughput of 500 GB/s.
+
+![PARAM Rudra Architecture Diagram  —](assets/img/ParamArchitecture.png){ loading=lazy }
+
 Storage is a **Lustre** parallel filesystem:
 
 | Path | Purpose | Quota (soft) | Backed up? | Purge |
@@ -75,6 +81,10 @@ throughput. See [Data Management](data.md) for quotas, Lustre striping and the
 purge policy.
 
 ## Software stack
+
+![Software Stack -](assets/img/SoftwareStack.png){ loading=lazy}
+
+
 
 | Functional area | Component(s) |
 | --- | --- |
