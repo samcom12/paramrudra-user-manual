@@ -11,6 +11,10 @@ dependencies** into your environment on demand.
 module load spack
 . /home/apps/spack/share/spack/setup-env.sh      # note the leading dot
 ```
+<br>
+
+![load spack](assets/img/spackLoad.png){ loading=lazy }
+<br>
 
 Or set the root explicitly (equivalent):
 
@@ -22,7 +26,13 @@ export SPACK_ROOT=/home/apps/spack
 Put these two lines at the top of your **job scripts** (and, if you like, in
 `~/.bashrc`) so Spack is available before you `spack load` anything.
 
-## Finding packages
+## Use Pre-Installed Applications from Spack:
+
+**spack find**
+
+The spack find command is used to query installed packages on PARAM Rudra. Note that some packages appear identical with the default output. The -l flag shows the hash of each package, and the -f flag shows any non-empty compiler flags of those packages.
+
+
 
 ```bash
 spack find                 # packages already installed on the system
@@ -32,6 +42,9 @@ spack list                 # all packages Spack *could* build
 spack list gromacs         # search (wildcards added automatically)
 spack compilers            # compilers Spack knows about (alias: spack compiler list)
 ```
+<br>
+
+![spack find](assets/img/spackFind.png){ loading=lazy }
 
 Some packages have several builds that look identical in the default output —
 the **hash** (`spack find -l`) disambiguates them.
@@ -85,6 +98,10 @@ spack list <name>                  # confirm the package exists in the repo
 spack spec <name>                  # preview the concretized build + deps
 spack install <name>@<version> ...
 ```
+<br>
+
+![spack compilers](assets/img/spackCompilers.png){loading=lazy}
+<br>
 
 Example — GROMACS with CUDA + MPI, Intel compilers and MKL, for A100 GPUs
 (A100 = `cuda_arch=80`; the example below targets Hopper `90`, adjust to `80`):
@@ -107,6 +124,9 @@ spack uninstall zlib %gcc@13.4.0
     the [3-month purge](data.md)).
 
 ## Spack environments
+
+Spack has an environment feature in which you can group installed software. You can install software with different versions and dependencies in each environment and can change software to use at once by changing environments. You can create a Spack environment by *`spack env create`* command. You can create multiple environments by specifying different environment names here.
+
 
 Group software into named environments so different projects don't collide:
 
