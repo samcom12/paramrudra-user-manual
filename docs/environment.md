@@ -143,14 +143,68 @@ conda config --set auto_activate_base false   # takes effect next login
 See [Building Software](building.md) for compilers, MPI and CUDA, and for using
 `pip`/`venv` and Julia.
 
-## Transferring files
+## Transferring files between local machine and HPC cluster
 
-Quick reference (full details on the [Data Management](data.md) page):
+Users need to have their data and applications related to their project or research work on PARAM Rudra. To store the data, special directories named “home” have been made available to the users. While these directories are common to all the users, each user will have their own directory with their username in the “/home/” directory, where they can store their data.
+
+`/home/<username>/`  This directory is generally used by the user to store their data and if needed install their own applications.
+However, there is a limit to the storage provided to users. The limits have been defined according to quota over these directories, and all users will be allotted the same quota by default. When a user wishes to transfer data from their local system (laptop/desktop) to the HPC system, they can use various methods and tools.
+
+A user using the ‘Windows’ operating system will have access to methods and tools native to Microsoft Windows, as well as tools that can be installed on their Windows machine. Linux operating system users, however, do not require any tool. They can simply use the “scp” command on 
+their terminal. Here’s how:
+
+```bash 
+scp -P 4422 <path to the local data directory>
+ <username>@paramrudra.cdacb.in:<path to directory on HPC where to save the data>
+
+```
+
+Example:
 
 ```bash
 scp -P 4422  file  samirs@paramrudra.cdacb.in:/scratch/samirs/
 rsync -avP -e "ssh -p 4422"  ./dir/  samirs@paramrudra.cdacb.in:/scratch/samirs/dir/
 ```
+Quick reference (full details on the [Data Management](data.md) page):
+
+Same Command could be used to transfer data from the HPC system to another HPC system, or your own system.
+
+```bash 
+scp -r -P 4422 <file path> <username@<cluster IP/hostname>:/home/user/<path>
+
+```
+**Note:** use port 4422 for your system.
+
+**Note:** The local system (laptop/desktop) must be connected to a network that allows access to the HPC system. Additionally, please ensure that the firewall settings on your laptop are configured to allow access from the HPC system.
+Users are advised to keep a copy of their data once their project or research work is completed by transferring the data from PARAM Rudra to their local system (laptop/desktop). The command below can be used for file transfers in all the tools.
+
+## Tools
+
+### WinSCP (Windows installable application)
+
+This popular tool is freely available and is used very often to transfer data from Windows machine to Linux machine. This tool is GUI based which makes it very user-friendly.
+
+Link for this tool: <https://winscp.net/eng/download.php>
+<br>
+
+![WinSCP](assets/img/WinSCP1.png){ loading=lazy}
+
+Figure : A snapshot of the "WinSCP" tool to transfer file to and from remote computer.
+
+<br>
+
+![Cpatcha](assets/img/Tools2.png){ loading=lazy }
+
+Figure : Enter Captcha/String
+
+<br>
+
+![SFTP connection](assets/img/Tools3.png){loading=lazy}
+
+Figure :  Enter Verification Code 
+<br>
+
+**Note:** Port Used for SFTP connection is 4422 and not 22. Please change it to 4422
 
 ## Using Git on the cluster
 

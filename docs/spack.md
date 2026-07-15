@@ -5,6 +5,10 @@ package manager. Almost all applications, compilers and libraries are provided
 through Spack, letting you load a specific version of a package **with all its
 dependencies** into your environment on demand.
 
+## Introduction
+
+Spack automates the download-build-install process for software - including dependencies - and provides convenient management of versions and build configurations. It is designed to support multiple versions and configurations of software on a wide variety of platforms and environments. It is designed for large supercomputing centers, where many users and application teams share common installations of software on clusters with exotic architectures, using libraries that do not have a standard ABI. Spack is non-destructive: installing a new version does not break existing installations, so many configurations can coexist on the same system.
+
 ## Set up Spack in your shell
 
 ```bash
@@ -62,6 +66,10 @@ spack load gromacs@2026.1
 spack load intel-oneapi-compilers /6asbh6t
 spack load gromacs@5.1.4 /73dy73q
 ```
+
+!["gcc loading](assets/img/Loadgcc.png){ loading=lazy }
+
+Figure: Loading gcc through SPACK
 
 !!! tip "Pin the hash in job scripts"
     Loading `pkg /hash` guarantees you get the exact build you tested, even if a
@@ -137,6 +145,121 @@ spack install <pkg>              # installs into the active env
 spack env deactivate             # leave
 spack env list                   # list your environments
 ```
+
+## Packaging (For Application developers)
+
+Spack packages are installation scripts, which are essentially recipes for building the software.
+
+They define properties and behaviour of the build, such as:
+
+- where to find and how to retrieve the software.
+
+- its dependencies.
+
+- options for building the software from source; and
+
+- build commands.
+
+Once we’ve specified a package’s recipe, users of our recipe can ask Spack to build the software with different features on any of the supported systems. [Refer Packaging Guide — Spack documentation](https://spack.readthedocs.io/en/latest/packaging_guide_creation.html) for detailed understanding of the Spack packaging.
+
+Example Creating Own Package:
+
+In the below spec file we have used **Linewidth, an IISc developed code.** See the bold lines for comments related to preceding lines in the spec file of spack package named IiscLinewidth:
+
+```bash
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other # Spack Project Developers. See the top-level COPYRIGHT file for details. #
+# SPDX-License-Identifier: (Apache-2.0 OR MIT) import os
+import platform import sys
+import llnl.util.tty as tty from spack import *
+class IiscLinewidth(MakefilePackage): """
+Linewidth developed by IISC Banglore. """
+homepage = ""
+#Url for homepage
+url	= "file://{0}/linewidth.tar.gz".format(os.getcwd())
+#Url for source code
+manual_download = True
+#If source code is not available in public domain
+version('1', sha256='7215f6765e5f5eddfde5f0c67a5bbdef5960607f3e199a609ef5619278ec8a66',
+preferred=True)
+#You can add different versions for you package.
+variant('mpi', default=True, description='Install with MPI support') variant('openmp', default=True, description='Install with OpenMP
+support')
+#Variant gives flexibility to users for changing parameter before compilation.
+depends_on('gmake', type='build') depends_on('mpi', when='+mpi') depends_on('hdf5+fortran+hl+mpi') depends_on('intel-mkl') depends_on('py-h5py')
+depends_on('py-matplotlib', type=('build', 'run'))
+#Depend clause used to specify dependencies for your code.
+@property
+def build_targets(self): targets = [
+#'--directory=SRC', '--file=Makefile',
+'LIBS={0} {1} '.format(self.spec['intel-mkl'].libs.ld_flags,
+self.spec['hdf5'].libs.ld_flags), 'HDFINCFLAGS={0}'.format(self.spec['hdf5'].prefix.include), 'HDF5_HOME={0}'.format(self.spec['hdf5'].prefix), 'FC={0}'.format(self.spec['mpi'].mpifc)
+]
+return targets
+def install(self, spec, prefix): mkdirp(prefix.bin) install('linewidth', prefix.bin)
+####
+#This code uses Makefile for building application. We can define some properties
+# to make changes in Makefile, changing parameter in Makefile at compile time.
+```
+
+
+## Sample steps taken for creating linewidth application recipe for Spack
+
+- Source code: 
+
+    Source code of Linewidth was not available through a public repo like GitHub, so needed to import OS package.
+
+    os.getcwd() - expects the source tar present in current working directory. cha256 - to check for sha256 checksum we added same in version clause and for place holder we have given version as 1.
+
+    manual download = True refers to spack will not try to download source code for the package.
+
+    name - make sure that name of tar file is same as used inside package recipe
+
+- Variant- User can control behavior of application being built through this clause. Ex- To enable MPI support we have defined it to be true by default.
+
+- depends_on() - This clause defines all dependencies required to build the given application.
+Ex- In linewidth example we have used Intel-MKl and HDF5.
+
+- @property - With this decorator we can define some properties for build system like edit, build, install.
+
+- property build_targets - Defines logic of building source for native platform.
+
+- property install - Defines install procedure to be used after building source code. Ex- In our example we define prefix path
+
+## Sample SLURM script for OpenMP applications/programs. to use Spack
+
+```bash
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH -p cpu        # cpu/gpu/standard
+#SBATCH --exclusive
+#SBATCH -t 1:00:00
+
+
+echo "SLURM_JOBID = $SLURM_JOBID"
+echo "SLURM_JOB_NODELIST = $SLURM_JOB_NODELIST"
+echo "SLURM_NNODES = $SLURM_NNODES"
+echo "SLURM_NTASKS = $SLURM_NTASKS"
+
+
+# ---------------- Environment ----------------
+source /home/apps/spack/share/spack/setup-env.sh
+
+
+# Load compiler (adjust as needed)
+spack load gcc@13.4.0
+spack load intel-oneapi-compilers /6asbh6t 
+
+
+# ---------------- OpenMP tuning ----------------
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_PROC_BIND=close
+export OMP_PLACES=cores
+
+
+# ---------------- Run ----------------
+./a.out
+```
+
 
 ## Using Spack in a job script
 

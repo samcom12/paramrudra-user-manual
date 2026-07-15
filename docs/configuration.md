@@ -71,6 +71,24 @@ is 13,824 CUDA cores and 160 GB of GPU memory per node.
 ![PARAM Rudra Architecture Diagram  —](assets/img/ParamArchitecture.png){ loading=lazy }
 *Figure : PARAM Rudra Architecture Diagram.*
 <br>
+<br>
+
+## Operating System 
+The operating system on PARAM Rudra is Linux – Rocky 9.6
+
+A robust network infrastructure is essential for implementing the basic functionalities of a cluster. These functionalities include:
+
+- Management functionalities, such as monitoring, troubleshooting, starting and stopping various components of the cluster. The network/ or portion of the network that implements this functionality is referred to as the Management fabric.
+Ensuring fast read/ writes access to the storage, the network or portion of the network that implements this functionality is referred to as the storage fabric.
+
+- Ensuring fast I/O operations, such as connecting to other clusters and connecting the cluster to various users on the campus LAN. The network or portion of the network that implements this functionality is referred to as the I/O Fabric.
+
+- Ensuring High-Bandwidth, Low-latency communication among processors is essential for achieving high-scalability. The network or portion of the network that implements this functionality is referred to as Message Passing Fabric.
+
+Technically, all the above functionalities can be implemented in a single network. However, for optimal performance, economic suitability, and meeting specific requirements, these functionalities are implemented using two different networks based on different technologies, as explained below:
+
+
+### Network infrastructure 
 
 Storage is a **Lustre** parallel filesystem:
 

@@ -94,15 +94,26 @@ extra:
 
 nav:
   - Home: index.md
-  - Getting Access: access.md
-  - System Configuration: configuration.md
-  - Environment: environment.md
-  - Modules & Conda: modules.md
-  - Spack Packages: spack.md
-  - Building Software: building.md
-  - Batch System (SLURM): batch.md
-  - GPU Computing: gpu.md
-  - Machine Learning / DL: machine-learning.md
+
+  - Getting Started:
+      - Getting Access: access.md
+      - System Configuration: configuration.md
+      - Environment: environment.md
+
+  - Resource Management:
+      - Resource Management: resource-management.md
+      - Batch System (SLURM): batch.md
+      - Job Script Examples: examples.md
+
+  - Software:
+      - Modules & Conda: modules.md
+      - Spack Packages: spack.md
+      - Building Software: building.md
+
+  - GPU & AI:
+      - GPU Computing: gpu.md
+      - Machine Learning / DL: machine-learning.md
+
   - Applications:
       - Overview: applications/index.md
       - GROMACS: applications/gromacs.md
@@ -110,12 +121,16 @@ nav:
       - NAMD: applications/namd.md
       - OpenFOAM: applications/openfoam.md
       - WRF: applications/wrf.md
+      - Nwchem : applications/nwchem.md
+      - Cp2k : applications/cp2k.md
       - Quantum Chemistry & Others: applications/quantum-chemistry.md
-  - Job Script Examples: examples.md
-  - Best Practices & Performance: best-practices.md
-  - Debugging: debugging.md
-  - Data Management: data.md
-  - Policies: policies.md
-  - Accounts & Acknowledgement: acknowledgement.md
+
+  - User Guide:
+      - Best Practices & Performance: best-practices.md
+      - Debugging: debugging.md
+      - Data Management: data.md
+      - Policies: policies.md
+      - Accounts & Acknowledgement: acknowledgement.md
+      - FAQ & Support: support.md
+
   - Contributing: contributing.md
-  - FAQ & Support: support.md
