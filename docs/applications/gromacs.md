@@ -1,37 +1,102 @@
 # GROMACS
 
-**GROMACS** (GROningen MAchine for Chemical Simulations) is a fast, widely-used
-molecular dynamics package for proteins, lipids and nucleic acids, running on
-both CPUs and GPUs. Official site: <https://www.gromacs.org/>.
+## Introduction
 
+GROMACS is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles, and is a community-driven project. It is primarily designed for biochemical molecules like proteins, lipids, and nucleic acids that have a lot of complicated bonded interactions, but since GROMACS is extremely fast at calculating the nonbonded interactions (that usually dominate simulations) many groups are also using it for research on non-biological systems, e.g. polymers and fluid dynamics.
+
+Official site: <https://www.gromacs.org/>.
+
+### Input 
+
+The following example illustrates the running of GROMACS with the commonly used water_GMX50_bare benchmark data set.  
+
+The benchmark input files are pre-installed on the PARAM Rudra system and are available at:
+
+```bash
+/home/apps/hpc_inputs/applications/gromacs/water_GMX50_bare
+```
+
+Copy the benchmark dataset to your working directory before running the example:
+
+```bash
+cp -r /home/apps/hpc_inputs/applications/gromacs/water_GMX50_bare .
+cd water_GMX50_bare
+```
+
+Running GROMACS is a two-step process:
+
+- Generating the input file (.tpr)
+
+- Running the generated input file (.tpr)
+
+!!! note
+
+    The benchmark dataset is also available from the official GROMACS benchmark repository:
+
+    ```bash
+    wget http://ftp.gromacs.org/pub/benchmarks/water_GMX50_bare.tar.gz
+    tar -xzf water_GMX50_bare.tar.gz
+    ```
 ## Running (two steps)
 
 GROMACS runs are a two-step process: generate the run input (`.tpr`) with
 `grompp`, then run it with `mdrun`.
 
-## CPU job script
+## Sample SLURM script
+
+A sample Slurm job script for GROMACS is available at:
+
+```bash
+/home/apps/hpc_inputs/scripts/gromacs.slurm
+```
+
+Copy it to your working directory:
+
+or
 
 ```bash
 #!/bin/bash
-#SBATCH --job-name=gromacs
-#SBATCH --account=myproject
-#SBATCH --partition=cpu
-#SBATCH --nodes=1
+#SBATCH --job-name="rfm_job"
+#SBATCH --ntasks=48
 #SBATCH --ntasks-per-node=48
-#SBATCH --time=04:00:00
+#SBATCH --output=rfm_job.out
+#SBATCH --error=rfm_job.err
 #SBATCH --exclusive
-#SBATCH --output=job.%J.out
-#SBATCH --error=job.%J.err
+#SBATCH --partition=cpu
 
-source /home/apps/spack/share/spack/setup-env.sh
-spack load gromacs            # e.g. gromacs@<ver> /<hash>  (spack find -l gromacs)
-spack load openmpi           # or intel-oneapi-mpi
-export OMP_NUM_THREADS=1
 
-# 1) Build the .tpr, then 2) run
+# Load required packages
+spack load gromacs/pvlg3o7
+spack load openmpi /22inq4o
+
+
+# Extract benchmark
+tar -xvf water_GMX50_bare.tar.gz
+
+
+# Change to benchmark directory
+cd water-cut1.0_GMX50_bare/3072
+
+
+# Generate input
 gmx_mpi grompp -f pme.mdp -c conf.gro -p topol.top -o water_pme.tpr
-time mpirun -np $SLURM_NTASKS gmx_mpi mdrun -s water_pme.tpr
+
+
+# Run simulation
+time mpirun -np 48 gmx_mpi mdrun -nsteps 5000 -s water_pme.tpr
+
+
 ```
+
+## Expected Output
+
+Reference output files for verification are available at:
+
+```bash
+/home/apps/hpc_inputs/output/gromacs.out
+```
+
+Users can compare their results with the reference output to verify successful execution.
 
 ## GPU acceleration
 

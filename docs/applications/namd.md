@@ -1,30 +1,80 @@
 # NAMD
 
+## Introduction
+
 **NAMD** is a parallel molecular dynamics code designed for high-performance
 simulation of large biomolecular systems. It runs on both CPUs and GPUs.
 Official site: <https://www.ks.uiuc.edu/Research/namd/>.
+
+
+### Input
+
+The following example illustrates the running of NAMD with the commonly used data set. 
+
+The benchmark input files are pre-installed on the PARAM Rudra system and are available at:
+
+```bash
+/home/apps/hpc_inputs/applications/NAMD/apoa1.tar.gz
+```
+
+Copy the benchmark dataset to your working directory before running the example:
+
+```bash
+cp -r /home/apps/hpc_inputs/applications/NAMD/apoa1.tar.gz .
+cd apoa1.tar.gz
+```
+
+
+!!! note
+
+    The benchmark dataset is also available from the official NAMD benchmark repository:
+
+    ```bash 
+    wget https://www.ks.uiuc.edu/Research/namd/utilities/apoa1.tar.gz
+
+    ```
+## Sample SLURM script
+
+A sample Slurm job script for NAMD is available at:
+
+```bash
+/home/apps/hpc_inputs/scripts/namd.slurm
+```
+
+Copy it to your working directory:
+
+or
 
 ## CPU job script
 
 ```bash
 #!/bin/bash
-#SBATCH --job-name=namd
-#SBATCH --account=myproject
-#SBATCH --partition=cpu
-#SBATCH --nodes=1
+#SBATCH --job-name="rfm_job"
+#SBATCH --ntasks=48
 #SBATCH --ntasks-per-node=48
-#SBATCH --time=04:00:00
+#SBATCH --output=rfm_job.out
+#SBATCH --error=rfm_job.err
 #SBATCH --exclusive
-#SBATCH --output=job.%J.out
-#SBATCH --error=job.%J.err
-
-source /home/apps/spack/share/spack/setup-env.sh
-spack load namd
+#SBATCH --partition=cpu
+spack load namd/syvixe4
 export OMP_NUM_THREADS=1
+tar -xvf apoa1.tar.gz
+cd apoa1
+time \
+mpirun -np 48 namd3 apoa1.namd &> output
 
-tar -xvf apoa1.tar.gz && cd apoa1
-time mpirun -np $SLURM_NTASKS namd2 apoa1.namd &> output
 ```
+
+
+## Expected Output
+
+Reference output files for verification are available at:
+
+```bash
+/home/apps/hpc_inputs/output/namd.out
+```
+
+Users can compare their results with the reference output to verify successful execution.
 
 ## Input
 
